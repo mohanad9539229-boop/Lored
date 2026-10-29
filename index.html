@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAX HUB — San Diego Roleplay | ثيم الأحمر الغامق</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e02438'%3E%3Cpath d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z'/%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070203; --panel:#0d0507; --accent:#c1122f; --accent2:#e02438;
+    --accentBr:#ff4d5e; --text:#f7e9ea; --muted:#94666d; --line:rgba(200,45,75,.22);
+  }
+  body{ background:var(--bg); color:var(--text); font-family:'Cairo',sans-serif; overflow-x:hidden; }
+  ::selection{ background:var(--accent); color:#fff; }
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-track{ background:#0a0304; }
+  ::-webkit-scrollbar-thumb{ background:#57101b; border-radius:99px; border:2px solid #0a0304; }
+  ::-webkit-scrollbar-thumb:hover{ background:#8b1424; }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+  .noise::after{
+    content:''; position:fixed; inset:0; z-index:70; pointer-events:none; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .grid-bg{
+    background-image:linear-gradient(rgba(224,36,56,.05) 1px, transparent 1px),linear-gradient(90deg, rgba(224,36,56,.05) 1px, transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 90% 65% at 50% 0%, #000 35%, transparent 80%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 65% at 50% 0%, #000 35%, transparent 80%);
+  }
+  .grad-red{ background:linear-gradient(120deg,#ff6473 0%, #e02438 38%, #8b0f1f 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .btn-hero{ background:linear-gradient(135deg,#a31227,#e02438); box-shadow:0 8px 32px -6px rgba(224,36,56,.55), inset 0 1px 0 rgba(255,255,255,.18); transition:all .25s; }
+  .btn-hero:hover{ transform:translateY(-2px); box-shadow:0 14px 44px -6px rgba(224,36,56,.7), inset 0 1px 0 rgba(255,255,255,.22); }
+  .btn-ghost{ border:1px solid var(--line); background:rgba(224,36,56,.05); transition:all .25s; }
+  .btn-ghost:hover{ background:rgba(224,36,56,.12); border-color:rgba(224,36,56,.5); transform:translateY(-2px); }
+  .el{ background:rgba(21,7,9,.72); border:1px solid rgba(224,36,56,.14); border-radius:14px; }
+  .glow-orb{ position:absolute; border-radius:50%; filter:blur(90px); pointer-events:none; }
+  #embers{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+  .reveal{ opacity:0; }
+
+  .marquee-track{ display:flex; width:max-content; animation:mq 38s linear infinite; }
+  @keyframes mq{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+
+  /* badges */
+  .badge{ display:inline-flex; align-items:center; gap:5px; font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; padding:3px 8px; border-radius:99px; border:1px solid; letter-spacing:.04em; }
+  .t-event{ color:#ff8296; border-color:rgba(224,36,56,.45); background:rgba(224,36,56,.10); }
+  .t-func{ color:#c4b5fd; border-color:rgba(167,139,250,.4); background:rgba(167,139,250,.08); }
+
+  /* ══ mockup ══ */
+  #mockup{
+    width:100%; max-width:560px; border-radius:14px; overflow:hidden;
+    background:linear-gradient(160deg, rgba(24,8,11,.96), rgba(11,4,6,.97));
+    border:1px solid rgba(224,36,56,.28);
+    box-shadow:0 40px 90px -20px rgba(0,0,0,.85), 0 0 70px -18px rgba(224,36,56,.38), inset 0 1px 0 rgba(255,255,255,.05);
+    backdrop-filter:blur(14px); user-select:none;
+  }
+  .win-topbar{ cursor:grab; } .win-topbar:active{ cursor:grabbing; }
+  .tab-btn{ transition:all .2s; border:1px solid transparent; }
+  .tab-btn:hover{ background:rgba(224,36,56,.08); }
+  .tab-btn.active{ background:linear-gradient(135deg, rgba(163,18,39,.32), rgba(224,36,56,.18)); border-color:rgba(224,36,56,.4); color:#ffd9de; box-shadow:inset 0 1px 0 rgba(255,255,255,.06); }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; animation:panelIn .35s cubic-bezier(.22,1,.36,1); }
+  @keyframes panelIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none;} }
+  .el-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,.045); }
+  .el-row:last-child{ border-bottom:none; }
+  .switch{ width:40px; height:22px; border-radius:99px; background:#33131a; border:1px solid rgba(255,255,255,.07); position:relative; flex-shrink:0; transition:all .25s; }
+  .switch .dot{ position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:99px; background:#7d565c; transition:all .3s cubic-bezier(.34,1.56,.64,1); }
+  .switch.on{ background:linear-gradient(135deg,#a31227,#e02438); border-color:rgba(255,255,255,.15); box-shadow:0 0 14px -2px rgba(224,36,56,.65); }
+  .switch.on .dot{ transform:translateX(18px); background:#fff; }
+  .track{ height:6px; border-radius:99px; background:#2b0e13; position:relative; cursor:pointer; margin-top:14px; }
+  .track .fill{ position:absolute; top:0; left:0; height:100%; border-radius:99px; background:linear-gradient(90deg,#8b0f1f,#ff4d5e); box-shadow:0 0 12px rgba(224,36,56,.5); }
+  .track .thumb{ position:absolute; top:50%; width:15px; height:15px; border-radius:99px; background:#fff; transform:translate(-50%,-50%); box-shadow:0 2px 8px rgba(0,0,0,.6), 0 0 0 4px rgba(224,36,56,.25); }
+  .dd-list{ display:none; }
+  .dd.open .dd-list{ display:block; animation:panelIn .22s cubic-bezier(.22,1,.36,1); }
+  .dd.open .dd-chev{ transform:rotate(180deg); }
+  .dd-chev{ transition:transform .25s; }
+  .dd-opt:hover{ background:rgba(224,36,56,.14); }
+  .mock-btn{ background:linear-gradient(135deg,#a31227,#e02438); border:1px solid rgba(255,255,255,.14); box-shadow:0 6px 18px -6px rgba(224,36,56,.55), inset 0 1px 0 rgba(255,255,255,.16); transition:all .2s; }
+  .mock-btn:hover{ filter:brightness(1.12); } .mock-btn:active{ transform:scale(.97); }
+  .mock-danger{ background:linear-gradient(135deg,#7a0d1a,#b3122e); }
+  .mock-flat{ background:rgba(224,36,56,.08); border:1px solid rgba(224,36,56,.22); }
+  .mock-flat:hover{ background:rgba(224,36,56,.16); }
+  .kb-chip{ transition:all .2s; cursor:pointer; }
+  .kb-chip.listening{ border-color:#ff4d5e!important; color:#ff8d99!important; box-shadow:0 0 12px rgba(224,36,56,.4); animation:pulseKb 1s infinite; }
+  @keyframes pulseKb{ 0%,100%{ opacity:1;} 50%{ opacity:.55;} }
+  .chip-float{ animation:floaty 5s ease-in-out infinite; }
+  .chip-float.d2{ animation-delay:-2.5s; }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-10px);} }
+  #espBox{ transition:all .3s; }
+  .toast-in{ animation:toastIn .4s cubic-bezier(.22,1,.36,1); }
+  @keyframes toastIn{ from{ opacity:0; transform:translateX(-16px) scale(.96);} to{ opacity:1; transform:none;} }
+
+  /* ══ code ══ */
+  .code-shell{ background:linear-gradient(170deg,#120608, #0a0305); border:1px solid rgba(224,36,56,.25); box-shadow:0 30px 80px -30px rgba(0,0,0,.9), 0 0 60px -25px rgba(224,36,56,.3); }
+  .code-body{ direction:ltr; text-align:left; }
+  .code-body .ln{ color:#5c2a33; min-width:44px; padding-left:14px; text-align:right; user-select:none; flex-shrink:0; }
+  .code-body .cline{ display:flex; padding:0 18px 0 0; }
+  .code-body .cline:hover{ background:rgba(224,36,56,.045); }
+  .code-body pre span{ font-family:'JetBrains Mono',monospace; }
+  .hl-com{ color:#7d4a55; font-style:italic; } .hl-str{ color:#ffa9b3; }
+  .hl-hex{ color:#ff8d99; text-shadow:0 0 14px rgba(255,77,94,.35); }
+  .hl-kw{ color:#ff4d5e; font-weight:600; } .hl-bi{ color:#f0b429; }
+  .hl-num{ color:#7ee787; } .hl-meth{ color:#79c0ff; } .hl-prop{ color:#d2a8ff; } .hl-call{ color:#79c0ff; }
+  .hl-def{ color:#c9cdd3; }
+  .step-num{ background:linear-gradient(135deg,#a31227,#e02438); -webkit-background-clip:text; background-clip:text; color:transparent; }
+</style>
+</head>
+<body class="noise antialiased">
+
+<canvas id="embers"></canvas>
+<div class="glow-orb w-[520px] h-[520px] bg-[#e02438] opacity-[.13] -top-40 -right-40"></div>
+<div class="glow-orb w-[420px] h-[420px] bg-[#7f0d1e] opacity-[.22] top-[45%] -left-52"></div>
+<div class="glow-orb w-[500px] h-[500px] bg-[#570d1b] opacity-[.25] bottom-[-10%] right-[15%]"></div>
+
+<!-- ══ NAV ══ -->
+<nav class="fixed top-0 inset-x-0 z-50 border-b border-white/[0.05] bg-[#070203]/70 backdrop-blur-xl">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3 group">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#a31227] to-[#e02438] shadow-[0_0_20px_-4px_rgba(224,36,56,.7)] group-hover:scale-105 transition-transform">
+        <i data-lucide="siren" class="w-5 h-5 text-white"></i>
+      </div>
+      <div class="leading-tight">
+        <div class="font-black text-[15px]">SLAX HUB</div>
+        <div class="text-[10px] text-[#94666d] mono tracking-wider">SAN DIEGO ROLEPLAY</div>
+      </div>
+    </a>
+    <div class="hidden md:flex items-center gap-7 text-sm text-[#c9a9ad]">
+      <a href="#preview" class="hover:text-white transition-colors">المعاينة الحية</a>
+      <a href="#features" class="hover:text-white transition-colors">الميزات</a>
+      <a href="#code" class="hover:text-white transition-colors">الكود الكامل</a>
+      <a href="#steps" class="hover:text-white transition-colors">التشغيل</a>
+    </div>
+    <button onclick="copyCode()" class="btn-hero flex items-center gap-2 text-sm font-bold text-white px-4 py-2 rounded-xl">
+      <i data-lucide="copy" class="w-4 h-4"></i>
+      <span class="hidden sm:inline">نسخ السكربت</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<header class="relative pt-32 pb-16 lg:pt-40 lg:pb-24">
+  <div class="grid-bg absolute inset-0"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="grid lg:grid-cols-[1.02fr_.98fr] gap-14 items-center">
+
+      <div>
+        <div class="hero-el inline-flex items-center gap-2 border border-[#e02438]/30 bg-[#e02438]/[0.07] rounded-full px-4 py-1.5 text-[13px] text-rose-200/90 mb-7">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#ff4d5e]"></i>
+          مبني على تقرير الفحص الخاص بماب <span class="font-bold text-rose-100">San Diego Roleplay</span>
+        </div>
+        <h1 class="hero-el text-[46px] sm:text-6xl lg:text-[68px] font-black leading-[1.12] mb-6">
+          SLAX HUB
+          <br>
+          بثيم <span class="grad-red">الأحمر الغامق</span>
+        </h1>
+        <p class="hero-el text-[#b48f95] text-lg leading-relaxed max-w-xl mb-9">
+          سكربت WindUI كامل بستة تبويبات — كل زر ومفتاح فيه مربوط بريموت حقيقي كشفه تقريرك: الكفالة، تبديل الفرق، صافرات الشرطة، قفل السيارات، الخزائن، وأدوات تجريبية للـ ADMIN.
+        </p>
+        <div class="hero-el flex flex-wrap gap-4 mb-10">
+          <button onclick="copyCode()" class="btn-hero flex items-center gap-2.5 text-white font-extrabold px-7 py-3.5 rounded-2xl text-[15px]">
+            <i data-lucide="clipboard-copy" class="w-5 h-5"></i>
+            انسخ السكربت كاملاً
+          </button>
+          <a href="#code" class="btn-ghost flex items-center gap-2.5 text-rose-100 font-bold px-7 py-3.5 rounded-2xl text-[15px]">
+            <i data-lucide="code-2" class="w-5 h-5 text-[#ff4d5e]"></i>
+            استعرض الكود
+          </a>
+        </div>
+        <div class="hero-el flex flex-wrap gap-x-8 gap-y-4">
+          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">20+</div><div class="text-xs text-[#94666d] mt-1">ميزة جاهزة</div></div>
+          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">6</div><div class="text-xs text-[#94666d] mt-1">تبويبات منظمة</div></div>
+          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">16</div><div class="text-xs text-[#94666d] mt-1">ريموت حقيقي مربوط</div></div>
+          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">1</div><div class="text-xs text-[#94666d] mt-1">ملف واحد فقط</div></div>
+        </div>
+      </div>
+
+      <!-- live preview -->
+      <div id="preview" class="relative scroll-mt-32">
+        <div class="absolute -inset-6 rounded-[28px] overflow-hidden border border-white/[0.04]">
+          <img src="https://images.pexels.com/photos/35376289/pexels-photo-35376289.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200" alt="San Diego" class="w-full h-full object-cover opacity-45 saturate-[1.2]" id="sceneImg">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#070203] via-[#070203]/30 to-[#070203]/60"></div>
+          <div id="espBox" class="hidden absolute top-[30%] left-[34%] w-14 h-28 border-2 rounded-md" style="border-color:#c1122f">
+            <span id="espLabel" class="mono absolute -top-6 right-0 text-[9px] px-1.5 py-0.5 rounded" style="color:#c1122f;background:rgba(7,2,3,.85);border:1px solid currentColor">Officer [ESP]</span>
+          </div>
+        </div>
+
+        <div class="chip-float hidden xl:flex absolute -top-7 -right-8 z-20 items-center gap-2 bg-[#150709]/90 border border-[#e02438]/30 rounded-xl px-3.5 py-2 text-xs text-rose-200 backdrop-blur">
+          <i data-lucide="move" class="w-3.5 h-3.5 text-[#ff4d5e]"></i> اسحب النافذة من شريطها
+        </div>
+        <div class="chip-float d2 hidden xl:flex absolute -bottom-7 -left-6 z-20 items-center gap-2 bg-[#150709]/90 border border-[#e02438]/30 rounded-xl px-3.5 py-2 text-xs text-rose-200 backdrop-blur">
+          <i data-lucide="radio-tower" class="w-3.5 h-3.5 text-[#ff4d5e]"></i> مربوط بريموتات حقيقية
+        </div>
+
+        <div id="toasts" class="absolute top-3 left-3 z-[60] flex flex-col gap-2 w-64"></div>
+
+        <div id="mockupFloat" class="relative z-10">
+        <div id="mockup" dir="rtl">
+          <div class="win-topbar flex items-center gap-3 px-4 h-[52px] border-b border-white/[0.06] bg-white/[0.02]">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#a31227] to-[#e02438] shadow-[0_0_16px_-2px_rgba(224,36,56,.8)] flex-shrink-0">
+              <i data-lucide="siren" class="text-white" style="width:18px;height:18px"></i>
+            </div>
+            <div class="leading-tight flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span id="winTitle" class="font-extrabold text-[13.5px] truncate">SLAX HUB</span>
+                <span class="mono text-[9.5px] px-2 py-0.5 rounded-full border border-[#ff4d5e]/40 text-[#ff8d99] bg-[#7d1128]/30">SD RP</span>
+              </div>
+              <div class="text-[10px] text-[#94666d]">San Diego Roleplay</div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0" dir="ltr">
+              <button onclick="mockNotify('تصغير','هذه المعاينة فقط')" class="w-3.5 h-3.5 rounded-full bg-[#3f6b3a] border border-black/30 hover:brightness-125 transition"></button>
+              <button onclick="destroyWindow()" class="w-3.5 h-3.5 rounded-full bg-[#e02438] border border-black/30 hover:brightness-125 transition"></button>
+            </div>
+          </div>
+
+          <div class="flex h-[400px]">
+            <aside class="w-[150px] flex-shrink-0 border-l border-white/[0.05] p-2.5 flex flex-col gap-1.5 bg-black/20">
+              <div class="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.05] mb-1.5">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-[#94666d] flex-shrink-0"></i>
+                <input id="winSearch" type="text" placeholder="بحث..." class="bg-transparent outline-none text-[11px] w-full placeholder:text-[#6e454c] text-rose-100">
+              </div>
+              <button class="tab-btn active flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#a5878b]" data-tab="team">
+                <i data-lucide="siren" class="w-4 h-4"></i> الفِرق والسجن
+              </button>
+              <button class="tab-btn flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#a5878b]" data-tab="cars">
+                <i data-lucide="car" class="w-4 h-4"></i> السيارات
+              </button>
+              <button class="tab-btn flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#a5878b]" data-tab="player">
+                <i data-lucide="user" class="w-4 h-4"></i> الشخصية
+              </button>
+              <button class="tab-btn flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#a5878b]" data-tab="visual">
+                <i data-lucide="eye" class="w-4 h-4"></i> المرئيات
+              </button>
+              <button class="tab-btn flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#a5878b]" data-tab="settings">
+                <i data-lucide="settings" class="w-4 h-4"></i> الإعدادات
+              </button>
+              <div class="mt-auto px-3 py-2">
+                <div class="h-1 rounded-full bg-[#2b0e13] overflow-hidden"><div class="h-full w-2/3 rounded-full bg-gradient-to-r from-[#8b0f1f] to-[#ff4d5e]"></div></div>
+                <div class="text-[9px] text-[#6e454c] mt-2 mono">FPS: 144 · Ping: 18ms</div>
+              </div>
+            </aside>
+
+            <main class="flex-1 overflow-y-auto p-3.5 space-y-3.5" id="winContent" style="scrollbar-width:thin">
+
+              <!-- TEAM/JAIL -->
+              <section class="tab-panel active" id="panel-team">
+                <div class="el">
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">تبديل الفريق · <span class="mono text-[9px]" dir="ltr">TeamService.JoinTeam</span></div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">اختر الفريق</div>
+                    <div class="dd relative">
+                      <button class="dd-btn flex items-center gap-2 bg-[#1c0a0d] border border-[#e02438]/20 rounded-lg px-3 py-1.5 text-[11.5px] font-bold text-rose-100">
+                        <span class="dd-name">Civilian</span>
+                        <i data-lucide="chevron-down" class="dd-chev w-3.5 h-3.5 text-[#94666d]"></i>
+                      </button>
+                      <div class="dd-list absolute top-full mt-1.5 left-0 right-0 min-w-48 bg-[#17080b] border border-[#e02438]/25 rounded-lg overflow-hidden z-30 shadow-2xl" dir="ltr">
+                        <button class="dd-opt w-full text-left px-3 py-2 text-[11px] font-bold mono hover:text-white" data-act="team" data-name="San Diego Police Department">San Diego Police Department</button>
+                        <button class="dd-opt w-full text-left px-3 py-2 text-[11px] font-bold mono hover:text-white" data-act="team" data-name="San Diego County Sheriff">San Diego County Sheriff</button>
+                        <button class="dd-opt w-full text-left px-3 py-2 text-[11px] font-bold mono hover:text-white" data-act="team" data-name="California Highway Patrol">California Highway Patrol</button>
+                        <button class="dd-opt w-full text-left px-3 py-2 text-[11px] font-bold mono hover:text-white" data-act="team" data-name="Fire & Rescue">Fire &amp; Rescue</button>
+                        <button class="dd-opt w-full text-left px-3 py-2 text-[11px] font-bold mono hover:text-white" data-act="team" data-name="Civilian">Civilian</button>
+                        <button class="dd-opt w-full text-left px-3 py-2 text-[11px] font-bold mono hover:text-white" data-act="team" data-name="Criminal">Criminal</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-3 border-b border-white/[0.045]">
+                    <button onclick="mockNotify('TeamService','طلب انضمام: ' + selectedTeam)" class="mock-btn w-full flex items-center justify-center gap-2 text-white text-[12.5px] font-extrabold py-2.5 rounded-xl">
+                      <i data-lucide="users" class="w-4 h-4"></i> الانضمام للفريق
+                    </button>
+                  </div>
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">السجن · <span class="mono text-[9px]" dir="ltr">JailService</span></div>
+                  <div class="p-3 grid grid-cols-2 gap-2.5">
+                    <button onclick="mockNotify('JailService.Bail','تم إرسال طلب الكفالة')" class="mock-btn flex items-center justify-center gap-2 text-white text-[11.5px] font-extrabold py-2.5 rounded-xl">
+                      <i data-lucide="gavel" class="w-4 h-4"></i> دفع الكفالة
+                    </button>
+                    <button onclick="mockNotify('LoadoutService','تم فتح الخزنة عن بُعد')" class="mock-flat flex items-center justify-center gap-2 text-rose-100 text-[11.5px] font-extrabold py-2.5 rounded-xl transition">
+                      <i data-lucide="backpack" class="w-4 h-4"></i> فتح الخزنة
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- CARS -->
+              <section class="tab-panel" id="panel-cars">
+                <div class="el">
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">الشرطة والإنذار · <span class="mono text-[9px]" dir="ltr">VehicleService</span></div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">وضع الصافرة</div>
+                    <div class="dd relative">
+                      <button class="dd-btn flex items-center gap-2 bg-[#1c0a0d] border border-[#e02438]/20 rounded-lg px-3 py-1.5 text-[11.5px] font-bold text-rose-100">
+                        <span class="dd-name">إيقاف</span>
+                        <i data-lucide="chevron-down" class="dd-chev w-3.5 h-3.5 text-[#94666d]"></i>
+                      </button>
+                      <div class="dd-list absolute top-full mt-1.5 left-0 right-0 min-w-32 bg-[#17080b] border border-[#e02438]/25 rounded-lg overflow-hidden z-30 shadow-2xl">
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="siren" data-name="إيقاف">إيقاف (0)</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="siren" data-name="وضع 1">وضع 1</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="siren" data-name="وضع 2">وضع 2</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="siren" data-name="وضع 3">وضع 3</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">إضاءة الطوارئ <span class="mono text-[#ff8d99] text-[10px]">Lightbar</span></div>
+                    <div class="dd relative">
+                      <button class="dd-btn flex items-center gap-2 bg-[#1c0a0d] border border-[#e02438]/20 rounded-lg px-3 py-1.5 text-[11.5px] font-bold text-rose-100">
+                        <span class="dd-name">إيقاف</span>
+                        <i data-lucide="chevron-down" class="dd-chev w-3.5 h-3.5 text-[#94666d]"></i>
+                      </button>
+                      <div class="dd-list absolute top-full mt-1.5 left-0 right-0 min-w-32 bg-[#17080b] border border-[#e02438]/25 rounded-lg overflow-hidden z-30 shadow-2xl">
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="lightbar" data-name="إيقاف">إيقاف (0)</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="lightbar" data-name="مرحلة 1">مرحلة 1</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="lightbar" data-name="مرحلة 2">مرحلة 2</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="lightbar" data-name="مرحلة 3">مرحلة 3</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">تحكم السيارة</div>
+                  <div class="p-3 grid grid-cols-2 gap-2.5">
+                    <button onclick="mockNotify('VehicleService','تم تبديل قفل السيارة')" class="mock-flat flex items-center justify-center gap-2 text-rose-100 text-[11.5px] font-extrabold py-2.5 rounded-xl transition"><i data-lucide="lock" class="w-4 h-4"></i> قفل / فتح</button>
+                    <button onclick="mockNotify('VehicleService','تبديل أبواب السيارة')" class="mock-flat flex items-center justify-center gap-2 text-rose-100 text-[11.5px] font-extrabold py-2.5 rounded-xl transition"><i data-lucide="door-open" class="w-4 h-4"></i> الأبواب</button>
+                    <button onclick="mockNotify('VehicleService','إلغاء تعليق السيارة')" class="mock-flat flex items-center justify-center gap-2 text-rose-100 text-[11.5px] font-extrabold py-2.5 rounded-xl transition"><i data-lucide="wrench" class="w-4 h-4"></i> Unstuck</button>
+                    <button onclick="mockNotify('VehicleService','مغادرة المقعد')" class="mock-flat flex items-center justify-center gap-2 text-rose-100 text-[11.5px] font-extrabold py-2.5 rounded-xl transition"><i data-lucide="log-out" class="w-4 h-4"></i> مغادرة المقعد</button>
+                  </div>
+                  <div class="p-3 pt-0">
+                    <button onclick="mockNotify('VehicleCustomisation','تم فتح ورشة التعديل المحمولة')" class="mock-btn w-full flex items-center justify-center gap-2 text-white text-[12px] font-extrabold py-2.5 rounded-xl">
+                      <i data-lucide="paintbrush" class="w-4 h-4"></i> ورشة تعديل محمولة
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- PLAYER -->
+              <section class="tab-panel" id="panel-player">
+                <div class="el">
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">الحركة</div>
+                  <div class="px-4 py-3 border-b border-white/[0.045] search-item">
+                    <div class="flex items-center justify-between">
+                      <div class="text-[12.5px] font-bold">سرعة المشي</div>
+                      <span class="mono text-[11px] text-[#ff8d99] bg-[#7d1128]/25 border border-[#ff4d5e]/25 rounded-md px-2 py-0.5">16</span>
+                    </div>
+                    <div class="track slider" data-min="16" data-max="250" data-val="16" dir="ltr"><div class="fill"></div><div class="thumb"></div></div>
+                  </div>
+                  <div class="px-4 py-3 border-b border-white/[0.045] search-item">
+                    <div class="flex items-center justify-between">
+                      <div class="text-[12.5px] font-bold">قوة القفز</div>
+                      <span class="mono text-[11px] text-[#ff8d99] bg-[#7d1128]/25 border border-[#ff4d5e]/25 rounded-md px-2 py-0.5">50</span>
+                    </div>
+                    <div class="track slider" data-min="50" data-max="350" data-val="50" dir="ltr"><div class="fill"></div><div class="thumb"></div></div>
+                  </div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">قفز لا نهائي</div>
+                    <button class="switch" data-toggle data-name="قفز لا نهائي"><span class="dot"></span></button>
+                  </div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">الطيران <span class="mono text-[#ff8d99] text-[10px]">Fly</span></div>
+                    <button class="switch" data-toggle data-name="الطيران"><span class="dot"></span></button>
+                  </div>
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">الأفاتار · <span class="mono text-[9px]" dir="ltr">LoadoutService</span></div>
+                  <div class="p-3 grid grid-cols-2 gap-2.5">
+                    <button onclick="mockNotify('LoadoutService','تم استعادة الأفاتار')" class="mock-flat flex items-center justify-center gap-2 text-rose-100 text-[11.5px] font-extrabold py-2.5 rounded-xl transition"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> استعادة الأفاتار</button>
+                    <button onclick="mockNotify('PlayerDataService','الرصيد: $12,480')" class="mock-flat flex items-center justify-center gap-2 text-rose-100 text-[11.5px] font-extrabold py-2.5 rounded-xl transition"><i data-lucide="banknote" class="w-4 h-4"></i> عرض الكاش</button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- VISUAL -->
+              <section class="tab-panel" id="panel-visual">
+                <div class="el">
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">الرؤية والإضاءة</div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">رؤية اللاعبين <span class="mono text-[#ff8d99] text-[10px]">ESP</span></div>
+                    <button class="switch" id="espToggle" data-toggle><span class="dot"></span></button>
+                  </div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">لون ESP</div>
+                    <div class="dd relative">
+                      <button class="dd-btn flex items-center gap-2 bg-[#1c0a0d] border border-[#e02438]/20 rounded-lg px-3 py-1.5 text-[11.5px] font-bold text-rose-100">
+                        <span class="dd-name">أحمر غامق</span>
+                        <i data-lucide="chevron-down" class="dd-chev w-3.5 h-3.5 text-[#94666d]"></i>
+                      </button>
+                      <div class="dd-list absolute top-full mt-1.5 left-0 right-0 min-w-32 bg-[#17080b] border border-[#e02438]/25 rounded-lg overflow-hidden z-30 shadow-2xl">
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="espcolor" data-name="أحمر غامق" data-color="#c1122f">أحمر غامق</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="espcolor" data-name="قرمزي" data-color="#ff4d5e">قرمزي</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="espcolor" data-name="ناري" data-color="#ff7a1a">ناري</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="espcolor" data-name="أبيض" data-color="#f5e6e8">أبيض</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="el-row search-item">
+                    <div><div class="text-[12.5px] font-bold">إضاءة كاملة <span class="mono text-[#ff8d99] text-[10px]">FullBright</span></div><div class="text-[10.5px] text-[#94666d] mt-0.5">مفيد ليلاً في شوارع سان دييغو</div></div>
+                    <button class="switch" id="fbToggle" data-toggle><span class="dot"></span></button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- SETTINGS -->
+              <section class="tab-panel" id="panel-settings">
+                <div class="el">
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">إعدادات الواجهة</div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">زر إخفاء الواجهة</div>
+                    <button class="kb-chip mono text-[10.5px] px-2.5 py-1.5 rounded-lg bg-[#1c0a0d] border border-[#e02438]/25 text-rose-200" id="kbBtn">RightControl</button>
+                  </div>
+                  <div class="px-4 py-3 border-b border-white/[0.045] search-item">
+                    <div class="text-[12.5px] font-bold mb-2">عنوان النافذة</div>
+                    <input id="titleInput" type="text" value="SLAX HUB" dir="ltr" class="w-full mono text-[11.5px] bg-[#1c0a0d] border border-[#e02438]/20 rounded-lg px-3 py-2 text-rose-100 outline-none focus:border-[#ff4d5e]/60 transition" placeholder="New title...">
+                  </div>
+                  <div class="p-3">
+                    <button onclick="destroyWindow()" class="mock-btn mock-danger w-full flex items-center justify-center gap-2 text-white text-[12.5px] font-extrabold py-2.5 rounded-xl">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i> إغلاق الواجهة نهائياً
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+            </main>
+          </div>
+        </div>
+        </div>
+
+        <button id="reopenBtn" onclick="reopenWindow()" class="hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-[55] items-center gap-2.5 text-white font-extrabold text-[13px] px-6 py-3 rounded-full border-2 border-[#ff8d99]/50 shadow-[0_10px_40px_-8px_rgba(224,36,56,.8)]" style="background:linear-gradient(135deg,#8b0f1f,#e02438)">
+          <i data-lucide="siren" class="w-4 h-4"></i> فتح SLAX HUB
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ MARQUEE: real remotes ══ -->
+<div class="border-y border-[#e02438]/15 bg-[#0c0406]/80 py-4 overflow-hidden" dir="ltr">
+  <div class="marquee-track mono text-[12px] text-[#b48f95]">
+    <div class="flex items-center gap-10 px-5" id="mq1"></div>
+    <div class="flex items-center gap-10 px-5" id="mq2"></div>
+  </div>
+</div>
+
+<!-- ══ FEATURES ══ -->
+<section id="features" class="max-w-7xl mx-auto px-6 py-24 scroll-mt-20">
+  <div class="text-center mb-14 reveal">
+    <div class="mono text-[#ff4d5e] text-xs tracking-[.3em] mb-4">FEATURES</div>
+    <h2 class="text-4xl sm:text-5xl font-black">ستة تبويبات، <span class="grad-red">كلها مشبوكة بريموتاتك</span></h2>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="reveal el p-6 rounded-2xl hover:border-[#e02438]/40 transition-colors">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-5 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="siren" class="w-5 h-5 text-white"></i></div>
+      <h3 class="font-extrabold mb-2">الفِرق والسجن</h3>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">انضم لأي فريق عبر <span class="mono text-[#ff8d99] text-[11px]">TeamService.JoinTeam</span>، اخرج من السجن بالكفالة <span class="mono text-[#ff8d99] text-[11px]">JailService.Bail</span>، وافتح الخزنة من أي مكان.</p>
+    </div>
+    <div class="reveal el p-6 rounded-2xl hover:border-[#e02438]/40 transition-colors">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-5 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="car" class="w-5 h-5 text-white"></i></div>
+      <h3 class="font-extrabold mb-2">السيارات</h3>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">صافرات الشرطة وإضاءة الطوارئ، قفل السيارة والأبواب، إلغاء التعليق <span class="mono text-[#ff8d99] text-[11px]">Unstuck</span> وورشة تعديل محمولة بضغطة زر.</p>
+    </div>
+    <div class="reveal el p-6 rounded-2xl hover:border-[#e02438]/40 transition-colors">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-5 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="user" class="w-5 h-5 text-white"></i></div>
+      <h3 class="font-extrabold mb-2">الشخصية</h3>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">سرعة مشي وقفز بسلايدرات، طيران تجريبي، تغيير حجم الأفاتار عبر <span class="mono text-[#ff8d99] text-[11px]">SetScale</span> واستعادته وعرض رصيدك من <span class="mono text-[#ff8d99] text-[11px]">GetPlayerData</span>.</p>
+    </div>
+    <div class="reveal el p-6 rounded-2xl hover:border-[#e02438]/40 transition-colors">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-5 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="crown" class="w-5 h-5 text-white"></i></div>
+      <h3 class="font-extrabold mb-2">تبويب تجريبي</h3>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">استدعاء مباشر لريموتات <span class="mono text-[#ff8d99] text-[11px]">GetAllFlagsADMIN</span> و<span class="mono text-[#ff8d99] text-[11px]">SetFlagADMIN</span> المكتشفة في الفحص — للتجربة والاستكشاف.</p>
+    </div>
+    <div class="reveal el p-6 rounded-2xl hover:border-[#e02438]/40 transition-colors">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-5 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="eye" class="w-5 h-5 text-white"></i></div>
+      <h3 class="font-extrabold mb-2">المرئيات</h3>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">ESP يحدد اللاعبين بلون أحمر قابل للتخصيص مع أسمائهم، وإضاءة كاملة FullBright لشوارع سان دييغو الليلية.</p>
+    </div>
+    <div class="reveal el p-6 rounded-2xl hover:border-[#e02438]/40 transition-colors">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-5 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="shield-check" class="w-5 h-5 text-white"></i></div>
+      <h3 class="font-extrabold mb-2">حماية من الأخطاء</h3>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">كل استدعاء مغلف بـ <span class="mono text-[#ff8d99] text-[11px]">pcall</span> — إذا رفض السيرفر أي طلب (اللعبة فيها AntiTp وصلاحيات)، يظهر لك إشعار بدل ما يخرب السكربت.</p>
+    </div>
+  </div>
+
+  <!-- linked remotes -->
+  <div class="mt-14 reveal">
+    <div class="mono text-[#ff4d5e] text-xs tracking-[.3em] mb-6 text-center">LINKED REMOTES</div>
+    <div class="flex flex-wrap justify-center gap-2.5" id="remoteChips" dir="ltr"></div>
+  </div>
+</section>
+
+<!-- ══ CODE ══ -->
+<section id="code" class="max-w-7xl mx-auto px-6 py-10 pb-24 scroll-mt-20">
+  <div class="text-center mb-12 reveal">
+    <div class="mono text-[#ff4d5e] text-xs tracking-[.3em] mb-4">FULL SCRIPT</div>
+    <h2 class="text-4xl sm:text-5xl font-black mb-4">كود SLAX HUB — <span class="grad-red">جاهز للتنفيذ</span></h2>
+    <p class="text-[#a5878b] max-w-2xl mx-auto text-sm leading-relaxed">سكربت واحد متكامل: ثيم SlaxRed، دوال <span class="mono text-[#ff8d99]">fire</span> و<span class="mono text-[#ff8d99]">invoke</span> آمنة، وستة تبويبات مربوطة بالريموتات الحقيقية من تقرير الفحص.</p>
+  </div>
+
+  <div class="code-shell rounded-2xl overflow-hidden reveal">
+    <div class="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.06] bg-white/[0.02]">
+      <div class="flex items-center gap-3">
+        <div class="flex gap-1.5" dir="ltr">
+          <span class="w-3 h-3 rounded-full bg-[#e02438]/80"></span>
+          <span class="w-3 h-3 rounded-full bg-[#8b5a20]/80"></span>
+          <span class="w-3 h-3 rounded-full bg-[#2f6b3a]/80"></span>
+        </div>
+        <div class="flex items-center gap-2 text-[12px] text-[#a5878b]">
+          <i data-lucide="file-code-2" class="w-4 h-4 text-[#ff4d5e]"></i>
+          <span class="mono" dir="ltr">slaxhub_sandiego.lua</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="mono text-[10px] text-[#6e454c] hidden sm:block" id="lineCount"></span>
+        <button onclick="copyCode()" id="copyBtn" class="btn-hero flex items-center gap-2 text-white text-[12px] font-bold px-4 py-2 rounded-lg">
+          <i data-lucide="copy" class="w-3.5 h-3.5" id="copyIcon"></i>
+          <span id="copyLabel">نسخ الكود</span>
+        </button>
+      </div>
+    </div>
+    <div class="code-body overflow-x-auto py-4 mono text-[12.5px] leading-[1.75]" id="codeBody" style="max-height:640px; overflow-y:auto"></div>
+  </div>
+</section>
+
+<!-- ══ STEPS ══ -->
+<section id="steps" class="relative py-24 border-t border-[#e02438]/10 scroll-mt-20">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="mono text-[#ff4d5e] text-xs tracking-[.3em] mb-4">HOW TO RUN</div>
+      <h2 class="text-4xl sm:text-5xl font-black">ثلاث خطوات <span class="grad-red">وتشتغل في سان دييغو</span></h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="reveal el rounded-2xl p-7 relative overflow-hidden">
+        <div class="step-num mono text-6xl font-black absolute -top-2 left-4 opacity-90">01</div>
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-6 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="clipboard-copy" class="w-5 h-5 text-white"></i></div>
+        <h3 class="font-extrabold text-lg mb-2">انسخ السكربت</h3>
+        <p class="text-[13px] text-[#a5878b] leading-relaxed">من زر «نسخ الكود» بالأعلى — الملف شامل كل شيء، والثيم جاهز بدون تعديل.</p>
+      </div>
+      <div class="reveal el rounded-2xl p-7 relative overflow-hidden">
+        <div class="step-num mono text-6xl font-black absolute -top-2 left-4 opacity-90">02</div>
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-6 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="map-pin" class="w-5 h-5 text-white"></i></div>
+        <h3 class="font-extrabold text-lg mb-2">ادخل San Diego Roleplay</h3>
+        <p class="text-[13px] text-[#a5878b] leading-relaxed">شغّل روبلوكس وادخل ماب San Diego Roleplay ثم افتح مشغّلك (Delta / Solara / Wave).</p>
+      </div>
+      <div class="reveal el rounded-2xl p-7 relative overflow-hidden">
+        <div class="step-num mono text-6xl font-black absolute -top-2 left-4 opacity-90">03</div>
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-6 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="siren" class="w-5 h-5 text-white"></i></div>
+        <h3 class="font-extrabold text-lg mb-2">نفّذ وانضم للدورية</h3>
+        <p class="text-[13px] text-[#a5878b] leading-relaxed">ألصق واضغط Execute — ستظهر نافذة SLAX HUB بالأحمر الغامق مع إشعار ترحيب.</p>
+      </div>
+    </div>
+    <div class="reveal mt-8 flex items-start gap-4 el rounded-2xl p-5">
+      <i data-lucide="shield-alert" class="w-5 h-5 text-[#ff8d99] flex-shrink-0 mt-0.5"></i>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">
+        تنبيه مهم: تقريرك كشف أن اللعبة تحتوي نظام <span class="mono text-[#ff8d99]">AntiTp</span> (حماية من النقل) وأن عمليات الشراء والكفالة تتحقق منها السيرفر عبر <span class="mono text-[#ff8d99]">NotEnoughMoney</span> — لذلك بعض الميزات قد تُرفض من السيرفر وهذا طبيعي، والاستدعاءات كلها مغلفة بـ <span class="mono text-[#ff8d99]">pcall</span> لحماية السكربت. أسماء الفرق في القائمة قد تحتاج تعديلاً لتطابق أسماء الفرق الفعلية داخل اللعبة.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="border-t border-white/[0.05] py-10">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-5">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#a31227] to-[#e02438]">
+        <i data-lucide="siren" class="w-4 h-4 text-white"></i>
+      </div>
+      <div class="text-[13px] text-[#a5878b]">SLAX HUB — مبني على <a href="https://github.com/mohanad9539229-boop/Remote-event" target="_blank" rel="noopener" class="text-[#ff8d99] font-bold hover:underline">تقرير فحص San Diego Roleplay</a></div>
+    </div>
+    <div class="mono text-[11px] text-[#6e454c]" dir="ltr">WindUI by Footagesus · Dark Red Theme</div>
+  </div>
+</footer>
+
+<div id="globalToast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] hidden items-center gap-2.5 bg-[#150709] border border-[#ff4d5e]/40 rounded-xl px-5 py-3 shadow-[0_20px_60px_-10px_rgba(224,36,56,.5)]">
+  <i data-lucide="check-circle-2" class="text-[#ff4d5e]" style="width:18px;height:18px"></i>
+  <span class="text-[13px] font-bold" id="toastMsg">تم النسخ</span>
+</div>
+
+<script>
+/* ══════════════ SLAX HUB LUA SOURCE ══════════════ */
+const LUA_CODE = `--[[
+    ════════════════════════════════════════════
+        SLAX HUB  |  San Diego Roleplay
+        الثيم: SlaxRed (الأحمر الغامق)
+        مبني على تقرير فحص SLAX للريموتات
+    ════════════════════════════════════════════
+]]
+
+-- 1) تحميل WindUI
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+
+-- 2) ثيم الأحمر الغامق
+WindUI:AddTheme({
+    Name        = "SlaxRed",
+    Accent      = Color3.fromHex("#c1122f"),
+    Background  = Color3.fromHex("#0d0507"),
+    Outline     = Color3.fromHex("#6e1420"),
+    Text        = Color3.fromHex("#f7e9ea"),
+    Placeholder = Color3.fromHex("#94666d"),
+    Button      = Color3.fromHex("#57101b"),
+    Icon        = Color3.fromHex("#e05252"),
+})
+
+-- 3) مرجع ريموتات اللعبة (نسخة Knit من تقرير الفحص)
+local RS      = game:GetService("ReplicatedStorage")
+local Remotes = RS:WaitForChild("__remotes")
+
+local function getRemote(serviceName, remoteName)
+    local svc = Remotes:FindFirstChild(serviceName)
+    return svc and svc:FindFirstChild(remoteName)
+end
+
+-- إرسال RemoteEvent بأمان
+local function fire(serviceName, remoteName, ...)
+    local r = getRemote(serviceName, remoteName)
+    if r then
+        pcall(function(...)
+            r:FireServer(...)
+        end, ...)
+    end
+end
+
+-- استدعاء RemoteFunction بأمان — يرجع (نجاح, النتيجة)
+local function invoke(serviceName, remoteName, ...)
+    local r = getRemote(serviceName, remoteName)
+    if not r then return false, nil end
+    local ok, result = pcall(function(...)
+        return r:InvokeServer(...)
+    end, ...)
+    return ok, result
+end
+
+local function notify(title, content)
+    WindUI:Notify({ Title = title, Content = content, Icon = "flame", Duration = 3 })
+end
+
+-- 4) إنشاء النافذة
+local Window = WindUI:CreateWindow({
+    Title  = "SLAX HUB",
+    Icon   = "siren",
+    Author = "San Diego Roleplay",
+    Folder = "SlaxHub",
+    Theme  = "SlaxRed",
+    Size   = UDim2.fromOffset(580, 460),
+    ToggleKey = Enum.KeyCode.RightControl,
+    HideSearchBar = false,
+
+    OpenButton = {
+        Title           = "فتح SLAX HUB",
+        CornerRadius    = UDim.new(1, 0),
+        StrokeThickness = 2,
+        Enabled         = true,
+        Draggable       = true,
+        Color = ColorSequence.new(
+            Color3.fromHex("#8b0f1f"),
+            Color3.fromHex("#e02438")
+        ),
+    },
+})
+
+Window:Tag({
+    Title  = "San Diego RP",
+    Icon   = "siren",
+    Color  = Color3.fromHex("#7d1128"),
+    Border = true,
+})
+
+notify("SLAX HUB", "تم تحميل سكربت San Diego Roleplay")
+
+-- 5) التبويبات
+local TeamTab = Window:Tab({ Title = "الفِرق والسجن", Icon = "siren" })
+local CarTab  = Window:Tab({ Title = "السيارات",      Icon = "car" })
+local PlrTab  = Window:Tab({ Title = "الشخصية",       Icon = "user" })
+local VisTab  = Window:Tab({ Title = "المرئيات",      Icon = "eye" })
+local ExpTab  = Window:Tab({ Title = "تجريبي",        Icon = "flask-conical" })
+local SetTab  = Window:Tab({ Title = "الإعدادات",     Icon = "settings" })
+
+-- ═══════════ تبويب: الفِرق والسجن ═══════════
+local selectedTeam = "Civilian"
+
+TeamTab:Section({ Title = "تبديل الفريق" }):Dropdown({
+    Title  = "اختر الفريق",
+    Desc   = "عدّل الأسماء لتطابق فرق اللعبة إذا لزم",
+    Values = {
+        "San Diego Police Department",
+        "San Diego County Sheriff",
+        "California Highway Patrol",
+        "Fire & Rescue",
+        "Civilian",
+        "Criminal",
+    },
+    Value = "Civilian",
+    Callback = function(opt) selectedTeam = opt end,
+})
+
+TeamTab:Button({
+    Title   = "الانضمام للفريق",
+    Icon    = "users",
+    Color   = Color3.fromHex("#b3122e"),
+    Justify = "Center",
+    Callback = function()
+        local ok = invoke("TeamService", "JoinTeam", selectedTeam)
+        notify("TeamService", ok and ("طلب انضمام: " .. selectedTeam) or "السيرفر رفض الطلب")
+    end,
+})
+
+local JailSec = TeamTab:Section({ Title = "السجن والخزائن" })
+
+JailSec:Button({
+    Title   = "دفع الكفالة والخروج (Bail)",
+    Icon    = "gavel",
+    Color   = Color3.fromHex("#b3122e"),
+    Justify = "Center",
+    Callback = function()
+        local ok = invoke("JailService", "Bail")
+        notify("JailService", ok and "تم إرسال طلب الكفالة" or "فشل — قد تحتاج كاش كافياً")
+    end,
+})
+
+JailSec:Button({
+    Title   = "فتح الخزنة من أي مكان",
+    Icon    = "backpack",
+    Justify = "Center",
+    Callback = function()
+        local ok = invoke("LoadoutService", "OpenLocker")
+        notify("LoadoutService", ok and "تم فتح الخزنة" or "فشل الطلب")
+    end,
+})
+
+-- ═══════════ تبويب: السيارات ═══════════
+local SirenSec = CarTab:Section({ Title = "الشرطة والإنذار" })
+
+SirenSec:Dropdown({
+    Title  = "وضع الصافرة",
+    Values = { "إيقاف", "1", "2", "3" },
+    Value  = "إيقاف",
+    Callback = function(opt)
+        fire("VehicleService", "SetSirenMode", tonumber(opt) or 0)
+    end,
+})
+
+SirenSec:Dropdown({
+    Title  = "نغمة الصافرة (Tone)",
+    Values = { "1", "2", "3" },
+    Value  = "1",
+    Callback = function(opt)
+        fire("VehicleService", "SetSirenTone", tonumber(opt) or 1)
+    end,
+})
+
+SirenSec:Dropdown({
+    Title  = "إضاءة الطوارئ (Lightbar)",
+    Values = { "إيقاف", "1", "2", "3" },
+    Value  = "إيقاف",
+    Callback = function(opt)
+        fire("VehicleService", "SetLightbarStage", tonumber(opt) or 0)
+    end,
+})
+
+local CarSec = CarTab:Section({ Title = "تحكم السيارة" })
+
+CarSec:Button({
+    Title = "قفل / فتح السيارة",
+    Icon  = "lock",
+    Callback = function()
+        invoke("VehicleService", "ToggleLocked")
+        notify("VehicleService", "تم تبديل قفل السيارة")
+    end,
+})
+
+CarSec:Button({
+    Title = "تبديل الأبواب",
+    Icon  = "door-open",
+    Callback = function()
+        fire("VehicleService", "ToggleDoors")
+    end,
+})
+
+CarSec:Button({
+    Title = "إلغاء التعليق (Unstuck)",
+    Icon  = "wrench",
+    Callback = function()
+        fire("VehicleService", "UnstuckVehicle")
+        notify("VehicleService", "طلب إلغاء تعليق السيارة")
+    end,
+})
+
+CarSec:Button({
+    Title = "مغادرة المقعد",
+    Icon  = "log-out",
+    Callback = function()
+        fire("VehicleService", "ExitVehicleSeat")
+    end,
+})
+
+CarSec:Button({
+    Title   = "ورشة تعديل محمولة",
+    Icon    = "paintbrush",
+    Justify = "Center",
+    Color   = Color3.fromHex("#b3122e"),
+    Callback = function()
+        local ok = invoke("VehicleCustomisationService", "OpenPortableSession")
+        notify("VehicleCustomisation", ok and "تم فتح ورشة التعديل" or "فشل — جرّب قرب مركز التعديل")
+    end,
+})
+
+-- ═══════════ تبويب: الشخصية ═══════════
+local Players = game:GetService("Players")
+local UIS     = game:GetService("UserInputService")
+local RunSvc  = game:GetService("RunService")
+local LP      = Players.LocalPlayer
+
+local function getHumanoid()
+    local char = LP.Character
+    return char and char:FindFirstChildOfClass("Humanoid")
+end
+
+local MoveSec = PlrTab:Section({ Title = "الحركة" })
+
+MoveSec:Slider({
+    Title = "سرعة المشي",
+    Step  = 1,
+    Value = { Min = 16, Max = 250, Default = 16 },
+    Callback = function(v)
+        local hum = getHumanoid()
+        if hum then hum.WalkSpeed = v end
+    end,
+})
+
+MoveSec:Slider({
+    Title = "قوة القفز",
+    Step  = 1,
+    Value = { Min = 50, Max = 350, Default = 50 },
+    Callback = function(v)
+        local hum = getHumanoid()
+        if hum then hum.JumpPower = v end
+    end,
+})
+
+MoveSec:Toggle({
+    Title = "قفز لا نهائي",
+    Callback = function(state) _G.SlaxJump = state end,
+})
+
+UIS.JumpRequest:Connect(function()
+    if _G.SlaxJump then
+        local hum = getHumanoid()
+        if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+    end
+end)
+
+local flying = false
+MoveSec:Toggle({
+    Title = "الطيران (تجريبي)",
+    Desc  = "W A S D للحركة — Space للصعود — Shift للنزول",
+    Callback = function(state) flying = state end,
+})
+
+RunSvc.Heartbeat:Connect(function()
+    if not flying then return end
+    local char = LP.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    local cam = workspace.CurrentCamera
+    local dir = Vector3.zero
+    if UIS:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
+    if UIS:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
+    if UIS:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
+    if UIS:IsKeyDown(Enum.KeyCode.A) then dir -= cam.CFrame.RightVector end
+    if UIS:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.yAxis end
+    if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir -= Vector3.yAxis end
+    hrp.AssemblyLinearVelocity = dir.Magnitude > 0 and dir.Unit * 70 or Vector3.zero
+end)
+
+local AvaSec = PlrTab:Section({ Title = "الأفاتار والبيانات" })
+
+AvaSec:Slider({
+    Title = "حجم الشخصية (LoadoutService)",
+    Step  = 0.1,
+    Value = { Min = 0.5, Max = 3, Default = 1 },
+    Callback = function(v)
+        invoke("LoadoutService", "SetScale", v)
+    end,
+})
+
+AvaSec:Button({
+    Title = "استعادة الأفاتار",
+    Icon  = "rotate-ccw",
+    Callback = function()
+        invoke("LoadoutService", "RestoreAvatar")
+        notify("LoadoutService", "تمت استعادة الأفاتار")
+    end,
+})
+
+AvaSec:Button({
+    Title = "عرض رصيد الكاش",
+    Icon  = "banknote",
+    Callback = function()
+        local ok, data = invoke("PlayerDataService", "GetPlayerData")
+        if ok and data then
+            print(data)
+            local cash = (typeof(data) == "table") and (data.Cash or data.Money or data.Bank or "?") or tostring(data)
+            notify("PlayerDataService", "الرصيد: " .. tostring(cash))
+        else
+            notify("PlayerDataService", "فشل جلب البيانات")
+        end
+    end,
+})
+
+-- ═══════════ تبويب: المرئيات ═══════════
+local espOn     = false
+local espColor  = Color3.fromHex("#c1122f")
+local espLights = {}
+
+local function applyEsp()
+    for _, hl in pairs(espLights) do pcall(function() hl:Destroy() end) end
+    table.clear(espLights)
+    if not espOn then return end
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LP and plr.Character then
+            local hl = Instance.new("Highlight")
+            hl.FillColor    = espColor
+            hl.OutlineColor = espColor
+            hl.FillTransparency    = 0.6
+            hl.OutlineTransparency = 0
+            hl.Adornee = plr.Character
+            hl.Parent  = plr.Character
+            table.insert(espLights, hl)
+        end
+    end
+end
+
+Players.PlayerAdded:Connect(function(plr)
+    plr.CharacterAdded:Connect(function() task.wait(1) applyEsp() end)
+end)
+for _, plr in ipairs(Players:GetPlayers()) do
+    plr.CharacterAdded:Connect(function() task.wait(1) applyEsp() end)
+end
+
+local VisSec = VisTab:Section({ Title = "الرؤية والإضاءة" })
+
+VisSec:Toggle({
+    Title = "رؤية اللاعبين (ESP)",
+    Callback = function(state) espOn = state applyEsp() end,
+})
+
+VisSec:Dropdown({
+    Title  = "لون ESP",
+    Values = { "أحمر غامق", "قرمزي", "ناري", "أبيض" },
+    Value  = "أحمر غامق",
+    Callback = function(opt)
+        local map = {
+            ["أحمر غامق"] = "#c1122f",
+            ["قرمزي"]    = "#ff4d5e",
+            ["ناري"]     = "#ff7a1a",
+            ["أبيض"]     = "#f5e6e8",
+        }
+        espColor = Color3.fromHex(map[opt] or "#c1122f")
+        applyEsp()
+    end,
+})
+
+VisSec:Toggle({
+    Title = "إضاءة كاملة (FullBright)",
+    Callback = function(state)
+        local lighting = game:GetService("Lighting")
+        lighting.GlobalShadows  = not state
+        lighting.Brightness     = state and 2 or 1
+        lighting.OutdoorAmbient = state
+            and Color3.fromRGB(128, 128, 128)
+            or  Color3.fromRGB(70, 70, 70)
+    end,
+})
+
+-- ═══════════ تبويب: تجريبي ═══════════
+local ExpSec = ExpTab:Section({
+    Title = "FeatureFlagService — ريموتات ADMIN (تجريبي)",
+    TextSize = 13,
+})
+
+ExpSec:Section({
+    Title = "هذه الريموتات مكتشفة من الفحص وقد ترفضها صلاحيات السيرفر — جرّبها على مسؤوليتك.",
+    TextTransparency = 0.4,
+})
+
+ExpSec:Button({
+    Title = "جلب كل الأعلام (GetAllFlagsADMIN)",
+    Icon  = "crown",
+    Callback = function()
+        local ok, flags = invoke("FeatureFlagService", "GetAllFlagsADMIN")
+        if ok then
+            print(flags)
+            notify("ADMIN", "نجح — افتح الكونسول F9 لرؤية الأعلام")
+        else
+            notify("ADMIN", "السيرفر رفض — تحتاج صلاحيات")
+        end
+    end,
+})
+
+local flagName, flagVal = "", true
+ExpSec:Input({
+    Title       = "اسم الفلاغ",
+    Placeholder = "FlagName",
+    Callback    = function(text) flagName = text end,
+})
+
+ExpSec:Dropdown({
+    Title  = "القيمة",
+    Values = { "true", "false" },
+    Value  = "true",
+    Callback = function(opt) flagVal = (opt == "true") end,
+})
+
+ExpSec:Button({
+    Title = "تعيين الفلاغ (SetFlagADMIN)",
+    Icon  = "flask-conical",
+    Color = Color3.fromHex("#b3122e"),
+    Callback = function()
+        if flagName == "" then
+            notify("ADMIN", "اكتب اسم الفلاغ أولاً")
+            return
+        end
+        local ok = invoke("FeatureFlagService", "SetFlagADMIN", flagName, flagVal)
+        notify("ADMIN", ok and "تم إرسال الطلب" or "مرفوض من السيرفر")
+    end,
+})
+
+-- ═══════════ تبويب: الإعدادات ═══════════
+local SetSec = SetTab:Section({ Title = "إعدادات الواجهة" })
+
+SetSec:Slider({
+    Title = "حجم الواجهة (UIScale)",
+    Step  = 0.05,
+    Value = { Min = 0.7, Max = 1.3, Default = 1 },
+    Callback = function(v) Window:SetUIScale(v) end,
+})
+
+SetSec:Input({
+    Title       = "عنوان النافذة",
+    Default     = "SLAX HUB",
+    Placeholder = "اكتب اسماً جديداً...",
+    Callback    = function(text) Window:SetTitle(text) end,
+})
+
+SetSec:Button({
+    Title   = "إغلاق الواجهة نهائياً",
+    Icon    = "trash-2",
+    Color   = Color3.fromHex("#ff2d3f"),
+    Justify = "Center",
+    Callback = function() Window:Destroy() end,
+})`;
+
+/* ══════════════ HIGHLIGHT ══════════════ */
+function highlightLua(src){
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const re = /(\-\-\[\[[\s\S]*?\]\])|(\-\-[^\n]*)|("#[0-9A-Fa-f]{3,8}")|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|\b(local|function|end|if|then|else|elseif|for|while|do|return|true|false|nil|and|or|not|in|repeat|until|break)\b|\b(game|workspace|Color3|UDim2|UDim|Enum|ColorSequence|Instance|Vector3|math|string|table|task|print|warn|pairs|ipairs|tostring|tonumber|loadstring|require|pcall|typeof|_G|WindUI)\b|(\b\d+(?:\.\d+)?\b)|(:)([A-Za-z_]\w*)|(\.)([A-Za-z_]\w*)|([A-Za-z_]\w*)(?=\s*\()/g;
+  return esc(src).replace(re, (m, blk, com, hex, str, kw, bi, num, cp, meth, dp, prop, call) => {
+    if (blk)  return '<span class="hl-com">'+blk+'</span>';
+    if (com)  return '<span class="hl-com">'+com+'</span>';
+    if (hex)  return '<span class="hl-hex">'+hex+'</span>';
+    if (str)  return '<span class="hl-str">'+str+'</span>';
+    if (kw)   return '<span class="hl-kw">'+kw+'</span>';
+    if (bi)   return '<span class="hl-bi">'+bi+'</span>';
+    if (num)  return '<span class="hl-num">'+num+'</span>';
+    if (cp!==undefined) return '<span class="hl-def">'+cp+'</span><span class="hl-meth">'+meth+'</span>';
+    if (dp!==undefined) return '<span class="hl-def">'+dp+'</span><span class="hl-prop">'+prop+'</span>';
+    if (call) return '<span class="hl-call">'+call+'</span>';
+    return m;
+  });
+}
+function renderCode(){
+  const lines = highlightLua(LUA_CODE).split('\n');
+  document.getElementById('codeBody').innerHTML = lines.map((l,i) =>
+    '<div class="cline"><span class="ln">'+(i+1)+'</span><pre class="flex-1 whitespace-pre">'+(l||'&nbsp;')+'</pre></div>'
+  ).join('');
+  document.getElementById('lineCount').textContent = lines.length + ' lines · Lua · UTF-8';
+}
+renderCode();
+
+/* ══════════════ COPY ══════════════ */
+function copyText(text, msg){
+  const done = () => showToast(msg);
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text, done));
+  } else fallbackCopy(text, done);
+}
+function fallbackCopy(text, done){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta); done();
+}
+function copyCode(){
+  copyText(LUA_CODE, 'تم نسخ سكربت SLAX HUB كاملاً');
+  const lbl = document.getElementById('copyLabel'), icn = document.getElementById('copyIcon');
+  lbl.textContent = 'تم النسخ'; icn.setAttribute('data-lucide','check'); lucide.createIcons();
+  setTimeout(()=>{ lbl.textContent='نسخ الكود'; icn.setAttribute('data-lucide','copy'); lucide.createIcons(); }, 1800);
+}
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('globalToast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.remove('hidden'); t.classList.add('flex','toast-in');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.classList.add('hidden'); t.classList.remove('flex'); }, 2400);
+}
+
+/* ══════════════ MARQUEE + REMOTE CHIPS ══════════════ */
+const REMOTES = [
+  ['JailService.Bail','F'],['TeamService.JoinTeam','F'],['LoadoutService.OpenLocker','F'],
+  ['LoadoutService.SetScale','F'],['LoadoutService.RestoreAvatar','F'],['PlayerDataService.GetPlayerData','F'],
+  ['VehicleService.SetSirenMode','E'],['VehicleService.SetSirenTone','E'],['VehicleService.SetLightbarStage','E'],
+  ['VehicleService.ToggleLocked','F'],['VehicleService.ToggleDoors','E'],['VehicleService.UnstuckVehicle','E'],
+  ['VehicleService.ExitVehicleSeat','E'],['VehicleCustomisationService.OpenPortableSession','F'],
+  ['FeatureFlagService.GetAllFlagsADMIN','F'],['FeatureFlagService.SetFlagADMIN','F']
+];
+document.getElementById('remoteChips').innerHTML = REMOTES.map(([n,t]) =>
+  '<span class="badge '+(t==='F'?'t-func':'t-event')+' !text-[10px] !py-1.5 !px-3 cursor-pointer hover:brightness-125 transition" onclick="copyText(\''+n+'\',\'تم نسخ: '+n+'\')">'+n+(t==='F'?' → Invoke':' → Fire')+'</span>'
+).join('');
+const mqHTML = REMOTES.map(([n])=>'<span class="flex items-center gap-3 flex-shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-[#e02438] shadow-[0_0_8px_rgba(224,36,56,.9)]"></span>'+n+'</span>').join('');
+document.getElementById('mq1').innerHTML = mqHTML;
+document.getElementById('mq2').innerHTML = mqHTML;
+
+/* ══════════════ MOCKUP ══════════════ */
+let selectedTeam = 'Civilian';
+
+/* drag */
+(function(){
+  const win = document.getElementById('mockup');
+  const bar = win.querySelector('.win-topbar');
+  let sx, sy, ox=0, oy=0, dragging=false;
+  bar.addEventListener('pointerdown', e=>{
+    if (e.target.closest('button')) return;
+    dragging = true; sx = e.clientX; sy = e.clientY;
+    bar.setPointerCapture(e.pointerId);
+  });
+  window.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    ox = Math.max(-120, Math.min(120, ox + e.clientX - sx));
+    oy = Math.max(-60, Math.min(60, oy + e.clientY - sy));
+    sx = e.clientX; sy = e.clientY;
+    win.style.transform = 'translate('+ox+'px,'+oy+'px)';
+  });
+  window.addEventListener('pointerup', ()=> dragging=false);
+})();
+
+/* tabs */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    document.getElementById('winSearch').value = ''; filterSearch('');
+    document.querySelectorAll('.dd').forEach(d=>d.classList.remove('open'));
+  });
+});
+const winSearch = document.getElementById('winSearch');
+winSearch.addEventListener('input', ()=> filterSearch(winSearch.value));
+function filterSearch(q){
+  q = q.trim();
+  const active = document.querySelector('.tab-panel.active');
+  active.querySelectorAll('.search-item').forEach(row=>{
+    row.style.display = (!q || row.textContent.includes(q)) ? '' : 'none';
+  });
+}
+
+/* toggles */
+document.querySelectorAll('[data-toggle]').forEach(sw=>{
+  sw.addEventListener('click', ()=>{
+    sw.classList.toggle('on');
+    const on = sw.classList.contains('on');
+    if (sw.id === 'espToggle'){
+      document.getElementById('espBox').classList.toggle('hidden', !on);
+      mockNotify('ESP', on ? 'تم تفعيل رؤية اللاعبين' : 'تم إيقاف رؤية اللاعبين');
+      return;
+    }
+    if (sw.id === 'fbToggle'){
+      document.getElementById('sceneImg').style.filter = on ? 'brightness(2) saturate(1.1)' : 'none';
+      mockNotify('FullBright', on ? 'أضاءت شوارع سان دييغو' : 'عادت الإضاءة الليلية');
+      return;
+    }
+    if (sw.dataset.name) mockNotify(sw.dataset.name, on ? 'مُفعّل' : 'مُعطّل');
+  });
+});
+
+/* sliders */
+document.querySelectorAll('.track.slider').forEach(track=>{
+  const fill = track.querySelector('.fill');
+  const thumb = track.querySelector('.thumb');
+  const min = +track.dataset.min, max = +track.dataset.max;
+  const label = track.closest('.search-item').querySelector('.mono');
+  function setVal(clientX){
+    const r = track.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+    fill.style.width = (p*100)+'%'; thumb.style.left = (p*100)+'%';
+    label.textContent = Math.round(min + p*(max-min));
+  }
+  const p0 = (+track.dataset.val - min)/(max-min);
+  fill.style.width = (p0*100)+'%'; thumb.style.left = (p0*100)+'%';
+  track.addEventListener('pointerdown', e=>{
+    setVal(e.clientX);
+    const mv = ev=> setVal(ev.clientX);
+    const up = ()=>{ window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', mv);
+    window.addEventListener('pointerup', up);
+  });
+});
+
+/* generic dropdowns */
+document.querySelectorAll('.dd').forEach(dd=>{
+  dd.querySelector('.dd-btn').addEventListener('click', e=>{
+    e.stopPropagation();
+    const was = dd.classList.contains('open');
+    document.querySelectorAll('.dd').forEach(d=>d.classList.remove('open'));
+    if (!was) dd.classList.add('open');
+  });
+  dd.querySelectorAll('.dd-opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      dd.querySelector('.dd-name').textContent = opt.dataset.name;
+      dd.classList.remove('open');
+      const act = opt.dataset.act;
+      if (act === 'team'){ selectedTeam = opt.dataset.name; mockNotify('TeamService','اخترت: '+selectedTeam); }
+      else if (act === 'siren'){ mockNotify('SetSirenMode','الصافرة: '+opt.dataset.name); }
+      else if (act === 'lightbar'){ mockNotify('SetLightbarStage','إضاءة الطوارئ: '+opt.dataset.name); }
+      else if (act === 'espcolor'){
+        const box = document.getElementById('espBox');
+        box.style.borderColor = opt.dataset.color;
+        document.getElementById('espLabel').style.color = opt.dataset.color;
+        mockNotify('لون ESP','تم اختيار: '+opt.dataset.name);
+      }
+    });
+  });
+});
+document.addEventListener('click', ()=> document.querySelectorAll('.dd').forEach(d=>d.classList.remove('open')));
+
+/* keybind */
+const kb = document.getElementById('kbBtn');
+kb.addEventListener('click', ()=>{
+  kb.textContent = '...'; kb.classList.add('listening');
+  const h = e=>{
+    e.preventDefault();
+    kb.textContent = e.key === ' ' ? 'Space' : (e.key.length === 1 ? e.key.toUpperCase() : e.key);
+    kb.classList.remove('listening');
+    window.removeEventListener('keydown', h, true);
+    mockNotify('اختصار جديد','تم تعيين: '+kb.textContent);
+  };
+  window.addEventListener('keydown', h, true);
+});
+
+/* title */
+document.getElementById('titleInput').addEventListener('input', e=>{
+  document.getElementById('winTitle').textContent = e.target.value || 'SLAX HUB';
+});
+
+/* destroy / reopen */
+function destroyWindow(){
+  const win = document.getElementById('mockup');
+  gsap.to(win, { scale:.85, opacity:0, y:14, duration:.45, ease:'power3.in', onComplete:()=>{
+    win.style.display='none';
+    const rb = document.getElementById('reopenBtn');
+    rb.classList.remove('hidden'); rb.classList.add('flex');
+    gsap.from(rb, { scale:.6, opacity:0, duration:.5, ease:'back.out(2)' });
+  }});
+  mockNotify('الواجهة','تم الإغلاق — استخدم الزر العائم');
+}
+function reopenWindow(){
+  const rb = document.getElementById('reopenBtn');
+  rb.classList.add('hidden'); rb.classList.remove('flex');
+  const win = document.getElementById('mockup');
+  win.style.display='block';
+  gsap.fromTo(win, {scale:.85, opacity:0, y:14}, {scale:1, opacity:1, y:0, duration:.55, ease:'back.out(1.6)'});
+  mockNotify('SLAX HUB','أهلاً بعودتك للدورية');
+}
+
+/* toasts */
+function mockNotify(title, content){
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast-in flex items-start gap-2.5 bg-[#150709]/95 border border-[#ff4d5e]/35 rounded-xl px-3.5 py-2.5 shadow-[0_16px_40px_-10px_rgba(0,0,0,.8)] backdrop-blur';
+  t.innerHTML = '<div class="w-6 h-6 rounded-lg bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="siren" class="text-white" style="width:13px;height:13px"></i></div>'+
+    '<div class="min-w-0 flex-1"><div class="text-[11px] font-extrabold truncate" dir="ltr">'+title+'</div><div class="text-[10px] text-[#a5878b] truncate">'+content+'</div></div>'+
+    '<button class="text-[#6e454c] hover:text-white transition flex-shrink-0" onclick="this.parentElement.remove()"><i data-lucide="x" style="width:12px;height:12px"></i></button>';
+  c.appendChild(t);
+  lucide.createIcons();
+  setTimeout(()=>{ gsap.to(t,{x:-24,opacity:0,duration:.35,onComplete:()=>t.remove()}); }, 3200);
+}
+
+/* ══════════════ EMBERS ══════════════ */
+(function(){
+  const cv = document.getElementById('embers');
+  const ctx = cv.getContext('2d');
+  let W, H, parts = [];
+  function resize(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+  const N = Math.min(70, Math.floor(innerWidth/20));
+  function spawn(init){
+    return { x:Math.random()*W, y: init ? Math.random()*H : H+10, r:.6+Math.random()*2,
+      vy:.15+Math.random()*.45, vx:(Math.random()-.5)*.2, a:.08+Math.random()*.4,
+      hue: Math.random()<.85 ? 350+Math.random()*8 : 20+Math.random()*16, fl: Math.random()*Math.PI*2 };
+  }
+  for (let i=0;i<N;i++) parts.push(spawn(true));
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    for (const p of parts){
+      p.y -= p.vy; p.x += p.vx + Math.sin(p.fl += .01)*.15;
+      const tw = .6 + .4*Math.sin(p.fl*3);
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = 'hsla('+p.hue+',85%,58%,'+(p.a*tw)+')';
+      ctx.shadowColor = 'hsla('+p.hue+',90%,55%,.8)'; ctx.shadowBlur = 7;
+      ctx.fill();
+      if (p.y < -12 || p.x < -12 || p.x > W+12) Object.assign(p, spawn(false));
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ══════════════ REVEALS ══════════════ */
+gsap.registerPlugin(ScrollTrigger);
+window.addEventListener('load', ()=>{
+  lucide.createIcons();
+  gsap.from('.hero-el', { y:36, opacity:0, duration:1, stagger:.12, ease:'power3.out' });
+  gsap.from('#mockupFloat', { y:60, opacity:0, scale:.92, duration:1.2, delay:.35, ease:'power3.out', clearProps:'opacity,scale' });
+  gsap.to('#mockupFloat', { y:'+=9', duration:3.2, yoyo:true, repeat:-1, ease:'sine.inOut', delay:1.8 });
+  gsap.utils.toArray('.reveal').forEach(el=>{
+    gsap.fromTo(el, {y:44, opacity:0}, { y:0, opacity:1, duration:.9, ease:'power3.out',
+      scrollTrigger:{ trigger:el, start:'top 88%' } });
+  });
+  setTimeout(()=> mockNotify('SLAX HUB','تم تحميل سكربت San Diego Roleplay'), 1600);
+});
+lucide.createIcons();
+</script>
+</body>
+</html>
