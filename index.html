@@ -109,6 +109,24 @@
   .hl-num{ color:#7ee787; } .hl-meth{ color:#79c0ff; } .hl-prop{ color:#d2a8ff; } .hl-call{ color:#79c0ff; }
   .hl-def{ color:#c9cdd3; }
   .step-num{ background:linear-gradient(135deg,#a31227,#e02438); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  /* ══ رقصة مايباخ ══ */
+  @keyframes maybachDance{
+    0%,100%{ transform:translateY(0) rotate(-2deg); }
+    20%{ transform:translateY(-13px) rotate(5deg) scale(1.04); }
+    40%{ transform:translateY(0) rotate(-5deg); }
+    60%{ transform:translateY(-9px) rotate(6deg) scale(1.03); }
+    80%{ transform:translateY(0) rotate(-3deg); }
+  }
+  #danceStage.dancing #danceCar{ animation:maybachDance var(--danceDur,1s) ease-in-out infinite; filter:drop-shadow(0 0 18px rgba(255,201,60,.6)); }
+  .note{ opacity:0; }
+  #danceStage.dancing .note{ animation:noteUp 1.7s ease-out infinite; }
+  @keyframes noteUp{
+    0%{ opacity:0; transform:translateY(8px) scale(.7); }
+    30%{ opacity:1; }
+    100%{ opacity:0; transform:translateY(-44px) scale(1.1) rotate(15deg); }
+  }
+  #danceStage.dancing ~ #danceBtn, #danceBtn.dancing{ filter:brightness(1.12); box-shadow:0 10px 30px -8px rgba(255,201,60,.85)!important; }
 </style>
 </head>
 <body class="noise antialiased">
@@ -160,7 +178,7 @@
           بثيم <span class="grad-red">الأحمر الغامق</span>
         </h1>
         <p class="hero-el text-[#b48f95] text-lg leading-relaxed max-w-xl mb-9">
-          سكربت WindUI كامل بستة تبويبات — كل زر ومفتاح فيه مربوط بريموت حقيقي كشفه تقريرك: الكفالة، تبديل الفرق، صافرات الشرطة، قفل السيارات، الخزائن، وأدوات تجريبية للـ ADMIN.
+          سكربت WindUI كامل بسبعة تبويبات — كل زر ومفتاح مربوط بريموت حقيقي كشفه تقريرك: الكفالة، تبديل الفرق، صافرات الشرطة، قفل السيارات، الخزائن... وأضفنا <span class="text-rose-100 font-bold">أيم بوت + FOV</span> و<span class="text-[#ffd166] font-bold">رقصة مايباخ 👑</span>.
         </p>
         <div class="hero-el flex flex-wrap gap-4 mb-10">
           <button onclick="copyCode()" class="btn-hero flex items-center gap-2.5 text-white font-extrabold px-7 py-3.5 rounded-2xl text-[15px]">
@@ -173,9 +191,9 @@
           </a>
         </div>
         <div class="hero-el flex flex-wrap gap-x-8 gap-y-4">
-          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">20+</div><div class="text-xs text-[#94666d] mt-1">ميزة جاهزة</div></div>
-          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">6</div><div class="text-xs text-[#94666d] mt-1">تبويبات منظمة</div></div>
-          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">16</div><div class="text-xs text-[#94666d] mt-1">ريموت حقيقي مربوط</div></div>
+          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">30+</div><div class="text-xs text-[#94666d] mt-1">ميزة جاهزة</div></div>
+          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">7</div><div class="text-xs text-[#94666d] mt-1">تبويبات منظمة</div></div>
+          <div><div class="mono text-2xl font-bold text-[#ff4d5e]">17</div><div class="text-xs text-[#94666d] mt-1">ريموت حقيقي مربوط</div></div>
           <div><div class="mono text-2xl font-bold text-[#ff4d5e]">1</div><div class="text-xs text-[#94666d] mt-1">ملف واحد فقط</div></div>
         </div>
       </div>
@@ -188,6 +206,18 @@
           <div id="espBox" class="hidden absolute top-[30%] left-[34%] w-14 h-28 border-2 rounded-md" style="border-color:#c1122f">
             <span id="espLabel" class="mono absolute -top-6 right-0 text-[9px] px-1.5 py-0.5 rounded" style="color:#c1122f;background:rgba(7,2,3,.85);border:1px solid currentColor">Officer [ESP]</span>
           </div>
+        </div>
+
+        <!-- FOV circle + aim reticle (overlay) -->
+        <div id="fovWrap" class="absolute inset-0 hidden pointer-events-none z-[45]">
+          <div id="fovCircle" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full" style="width:220px;height:220px;border:1.5px solid rgba(255,45,63,.9);box-shadow:0 0 24px -4px rgba(224,36,56,.45), inset 0 0 40px rgba(224,36,56,.08)"></div>
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div class="relative w-4 h-4">
+              <span class="absolute inset-0 border border-[#ff4d5e]/80 rounded-full animate-ping"></span>
+              <span class="absolute top-1/2 left-1/2 w-1 h-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ff4d5e]"></span>
+            </div>
+          </div>
+          <span id="fovLabel" class="mono absolute top-3 left-3 text-[9px] px-2 py-0.5 rounded border" style="color:#ff8d99;background:rgba(7,2,3,.8);border-color:rgba(224,36,56,.35)" dir="ltr">FOV 120</span>
         </div>
 
         <div class="chip-float hidden xl:flex absolute -top-7 -right-8 z-20 items-center gap-2 bg-[#150709]/90 border border-[#e02438]/30 rounded-xl px-3.5 py-2 text-xs text-rose-200 backdrop-blur">
@@ -235,6 +265,9 @@
               </button>
               <button class="tab-btn flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#a5878b]" data-tab="visual">
                 <i data-lucide="eye" class="w-4 h-4"></i> المرئيات
+              </button>
+              <button class="tab-btn flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#a5878b]" data-tab="aim">
+                <i data-lucide="crosshair" class="w-4 h-4"></i> الأيم بوت
               </button>
               <button class="tab-btn flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-bold text-[#a5878b]" data-tab="settings">
                 <i data-lucide="settings" class="w-4 h-4"></i> الإعدادات
@@ -331,6 +364,35 @@
                       <i data-lucide="paintbrush" class="w-4 h-4"></i> ورشة تعديل محمولة
                     </button>
                   </div>
+
+                  <!-- رقصة مايباخ -->
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">رقصة مايباخ · <span class="mono text-[9px] text-[#ffd166]" dir="ltr">Maybach</span></div>
+                  <div class="mx-3 mb-3 rounded-xl overflow-hidden border p-3 relative" style="border-color:rgba(255,209,102,.28); background:linear-gradient(145deg, rgba(56,38,7,.5), rgba(21,7,9,.92))">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="badge" style="color:#ffd166;border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.1)"><i data-lucide="crown" style="width:9px;height:9px"></i> رخصة مايباخ</span>
+                      <span class="mono text-[8.5px] text-[#ffd166]/60" dir="ltr">MAYBACH EDITION</span>
+                    </div>
+                    <div class="relative h-[76px] flex items-center justify-center" id="danceStage">
+                      <div class="absolute inset-x-8 bottom-2 h-3 rounded-full blur-md" style="background:rgba(255,201,60,.28)"></div>
+                      <span class="note absolute text-[#ffd166] text-sm" style="left:24%;bottom:18px">♪</span>
+                      <span class="note absolute text-[#ffd166] text-xs" style="left:66%;bottom:22px;animation-delay:.5s">♫</span>
+                      <span class="note absolute text-[#ffd166] text-[11px]" style="left:46%;bottom:14px;animation-delay:1s">♪</span>
+                      <div id="danceCar" class="relative">
+                        <i data-lucide="car-front" class="text-[#ffd166]" style="width:70px;height:70px;stroke-width:1.4"></i>
+                      </div>
+                      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 mono text-[8px] px-2 py-0.5 rounded border" style="color:#2a1a06;background:linear-gradient(135deg,#ffe9a8,#ffc93c);border-color:rgba(120,90,10,.5);letter-spacing:.16em" dir="ltr">MAYBACH</div>
+                    </div>
+                    <button onclick="toggleDance()" id="danceBtn" class="mt-3 w-full flex items-center justify-center gap-2 text-[11.5px] font-extrabold py-2.5 rounded-xl transition" style="background:linear-gradient(135deg,#c79a18,#ffc93c); color:#2a1a06; box-shadow:0 8px 24px -8px rgba(255,201,60,.6)">
+                      <i data-lucide="music" style="width:15px;height:15px"></i> <span id="danceBtnLabel">شغّل رقصة مايباخ</span>
+                    </button>
+                    <div class="search-item mt-1">
+                      <div class="flex items-center justify-between">
+                        <div class="text-[11px] font-bold">سرعة الرقصة</div>
+                        <span class="mono text-[10px] text-[#ffd166]">x1</span>
+                      </div>
+                      <div class="track slider" data-fx="dance" data-min="1" data-max="3" data-val="1" dir="ltr" style="margin-top:6px"><div class="fill"></div><div class="thumb"></div></div>
+                    </div>
+                  </div>
                 </div>
               </section>
 
@@ -398,6 +460,68 @@
                 </div>
               </section>
 
+              <!-- AIMBOT -->
+              <section class="tab-panel" id="panel-aim">
+                <div class="el">
+                  <div class="px-4 pt-3 pb-1 text-[11px] font-extrabold text-[#94666d] tracking-wide">التصويب التلقائي · <span class="mono text-[9px]" dir="ltr">Aimbot</span></div>
+                  <div class="el-row search-item">
+                    <div><div class="text-[12.5px] font-bold">تفعيل الأيم بوت</div><div class="text-[10.5px] text-[#94666d] mt-0.5">يصوّب تلقائياً على أقرب هدف</div></div>
+                    <button class="switch" id="aimToggle" data-toggle><span class="dot"></span></button>
+                  </div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">إظهار دائرة FOV</div>
+                    <button class="switch on" id="fovToggle" data-toggle><span class="dot"></span></button>
+                  </div>
+                  <div class="px-4 py-3 border-b border-white/[0.045] search-item">
+                    <div class="flex items-center justify-between">
+                      <div class="text-[12.5px] font-bold">نطاق التصويب (FOV)</div>
+                      <span class="mono text-[11px] text-[#ff8d99] bg-[#7d1128]/25 border border-[#ff4d5e]/25 rounded-md px-2 py-0.5" id="fovVal">120</span>
+                    </div>
+                    <div class="track slider" data-fx="fov" data-min="20" data-max="400" data-val="120" dir="ltr"><div class="fill"></div><div class="thumb"></div></div>
+                  </div>
+                  <div class="px-4 py-3 border-b border-white/[0.045] search-item">
+                    <div class="flex items-center justify-between">
+                      <div class="text-[12.5px] font-bold">سلاسة التصويب</div>
+                      <span class="mono text-[11px] text-[#ff8d99] bg-[#7d1128]/25 border border-[#ff4d5e]/25 rounded-md px-2 py-0.5">8</span>
+                    </div>
+                    <div class="track slider" data-min="1" data-max="20" data-val="8" dir="ltr"><div class="fill"></div><div class="thumb"></div></div>
+                  </div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">الجزء المستهدف</div>
+                    <div class="dd relative">
+                      <button class="dd-btn flex items-center gap-2 bg-[#1c0a0d] border border-[#e02438]/20 rounded-lg px-3 py-1.5 text-[11.5px] font-bold text-rose-100">
+                        <span class="dd-name">الرأس</span>
+                        <i data-lucide="chevron-down" class="dd-chev w-3.5 h-3.5 text-[#94666d]"></i>
+                      </button>
+                      <div class="dd-list absolute top-full mt-1.5 left-0 right-0 min-w-32 bg-[#17080b] border border-[#e02438]/25 rounded-lg overflow-hidden z-30 shadow-2xl">
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="aimpart" data-name="الرأس">الرأس (Head)</button>
+                        <button class="dd-opt w-full text-right px-3 py-2 text-[11.5px] font-bold hover:text-white" data-act="aimpart" data-name="الجسم">الجسم (Root)</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="el-row search-item">
+                    <div class="text-[12.5px] font-bold">تجاهل أعضاء فريقي</div>
+                    <button class="switch on" data-toggle data-name="تجاهل الفريق"><span class="dot"></span></button>
+                  </div>
+                  <div class="px-4 py-3 border-b border-white/[0.045] search-item">
+                    <div class="flex items-center justify-between">
+                      <div class="text-[12.5px] font-bold">مجال رؤية الكاميرا (Camera FOV)</div>
+                      <span class="mono text-[11px] text-[#ff8d99] bg-[#7d1128]/25 border border-[#ff4d5e]/25 rounded-md px-2 py-0.5">70</span>
+                    </div>
+                    <div class="track slider" data-min="70" data-max="120" data-val="70" dir="ltr"><div class="fill"></div><div class="thumb"></div></div>
+                  </div>
+                  <div class="p-3">
+                    <button onclick="mockNotify('Aimbot','الأيم بوت جاهز للاستخدام')" class="mock-btn w-full flex items-center justify-center gap-2 text-white text-[12.5px] font-extrabold py-2.5 rounded-xl">
+                      <i data-lucide="crosshair" class="w-4 h-4"></i> تجربة التصويب
+                    </button>
+                  </div>
+                </div>
+                <div class="el px-4 py-3 flex items-start gap-3">
+                  <i data-lucide="scan-eye" class="w-4 h-4 text-[#ff4d5e] flex-shrink-0 mt-0.5"></i>
+                  <p class="text-[11px] text-[#a5878b] leading-relaxed">فعّل الأيم بوت لتظهر الدائرة الحمراء حول مركز الشاشة — كبّر الـ FOV ليصوّب على أهداف أبعد، وصغّره للدقة.</p>
+                </div>
+              </section>
+
               <!-- SETTINGS -->
               <section class="tab-panel" id="panel-settings">
                 <div class="el">
@@ -443,7 +567,7 @@
 <section id="features" class="max-w-7xl mx-auto px-6 py-24 scroll-mt-20">
   <div class="text-center mb-14 reveal">
     <div class="mono text-[#ff4d5e] text-xs tracking-[.3em] mb-4">FEATURES</div>
-    <h2 class="text-4xl sm:text-5xl font-black">ستة تبويبات، <span class="grad-red">كلها مشبوكة بريموتاتك</span></h2>
+    <h2 class="text-4xl sm:text-5xl font-black">سبعة تبويبات، <span class="grad-red">كلها مشبوكة بريموتاتك</span></h2>
   </div>
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
     <div class="reveal el p-6 rounded-2xl hover:border-[#e02438]/40 transition-colors">
@@ -476,6 +600,16 @@
       <h3 class="font-extrabold mb-2">حماية من الأخطاء</h3>
       <p class="text-[13px] text-[#a5878b] leading-relaxed">كل استدعاء مغلف بـ <span class="mono text-[#ff8d99] text-[11px]">pcall</span> — إذا رفض السيرفر أي طلب (اللعبة فيها AntiTp وصلاحيات)، يظهر لك إشعار بدل ما يخرب السكربت.</p>
     </div>
+    <div class="reveal el p-6 rounded-2xl hover:border-[#e02438]/40 transition-colors">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a31227] to-[#e02438] flex items-center justify-center mb-5 shadow-[0_8px_24px_-6px_rgba(224,36,56,.6)]"><i data-lucide="crosshair" class="w-5 h-5 text-white"></i></div>
+      <h3 class="font-extrabold mb-2">الأيم بوت + FOV</h3>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">تصويب تلقائي على أقرب هدف مع دائرة FOV حمراء قابلة للتكبير، اختيار الجزء المستهدف (رأس/جسم)، تجاهل الفريق، وسلايدر لمجال رؤية الكاميرا.</p>
+    </div>
+    <div class="reveal el p-6 rounded-2xl transition-colors" style="border-color:rgba(255,209,102,.25)">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-5" style="background:linear-gradient(135deg,#c79a18,#ffc93c); box-shadow:0 8px 24px -6px rgba(255,201,60,.5)"><i data-lucide="car-front" class="w-5 h-5" style="color:#2a1a06"></i></div>
+      <div class="flex items-center gap-2 mb-2"><h3 class="font-extrabold">رقصة مايباخ 👑</h3><span class="badge" style="color:#ffd166;border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.1)">رخصة مايباخ</span></div>
+      <p class="text-[13px] text-[#a5878b] leading-relaxed">خيار يخلّي سيارتك ترقص: رفع واهتزاز ودوران بأنماط متعددة (مايباخ · نبض · دوران · قفزة) مع سرعة قابلة للتحكم وإضاءة طوارئ.</p>
+    </div>
   </div>
 
   <!-- linked remotes -->
@@ -490,7 +624,7 @@
   <div class="text-center mb-12 reveal">
     <div class="mono text-[#ff4d5e] text-xs tracking-[.3em] mb-4">FULL SCRIPT</div>
     <h2 class="text-4xl sm:text-5xl font-black mb-4">كود SLAX HUB — <span class="grad-red">جاهز للتنفيذ</span></h2>
-    <p class="text-[#a5878b] max-w-2xl mx-auto text-sm leading-relaxed">سكربت واحد متكامل: ثيم SlaxRed، دوال <span class="mono text-[#ff8d99]">fire</span> و<span class="mono text-[#ff8d99]">invoke</span> آمنة، وستة تبويبات مربوطة بالريموتات الحقيقية من تقرير الفحص.</p>
+    <p class="text-[#a5878b] max-w-2xl mx-auto text-sm leading-relaxed">سكربت واحد متكامل: ثيم SlaxRed، دوال <span class="mono text-[#ff8d99]">fire</span> و<span class="mono text-[#ff8d99]">invoke</span> آمنة، سبعة تبويبات مربوطة بالريموتات الحقيقية — مع <span class="text-[#ff8d99] font-bold">أيم بوت + دائرة FOV</span> و<span style="color:#ffd166" class="font-bold">رقصة مايباخ 👑</span>.</p>
   </div>
 
   <div class="code-shell rounded-2xl overflow-hidden reveal">
@@ -549,6 +683,8 @@
       <i data-lucide="shield-alert" class="w-5 h-5 text-[#ff8d99] flex-shrink-0 mt-0.5"></i>
       <p class="text-[13px] text-[#a5878b] leading-relaxed">
         تنبيه مهم: تقريرك كشف أن اللعبة تحتوي نظام <span class="mono text-[#ff8d99]">AntiTp</span> (حماية من النقل) وأن عمليات الشراء والكفالة تتحقق منها السيرفر عبر <span class="mono text-[#ff8d99]">NotEnoughMoney</span> — لذلك بعض الميزات قد تُرفض من السيرفر وهذا طبيعي، والاستدعاءات كلها مغلفة بـ <span class="mono text-[#ff8d99]">pcall</span> لحماية السكربت. أسماء الفرق في القائمة قد تحتاج تعديلاً لتطابق أسماء الفرق الفعلية داخل اللعبة.
+        <br><br>
+        <span class="text-[#ffd166] font-bold">رقصة مايباخ 👑</span> تعمل عبر <span class="mono text-[#ff8d99]">BodyVelocity</span> + <span class="mono text-[#ff8d99]">BodyAngularVelocity</span> على السيارة التي تركبها، ويجب أن تكون مالك الشبكة لها (جالساً فيها). إذا كانت اللعبة تمنع تحكم العميل بالسيارة فسيعيدها <span class="mono text-[#ff8d99]">AntiTp</span> لمكانها — هذا قيد اللعبة وليس خطأ في السكربت. أما <span class="mono text-[#ff8d99]">الأيم بوت</span> فهو تصويب على مستوى الكاميرا ويعمل مع أي ماب.
       </p>
     </div>
   </div>
@@ -579,6 +715,7 @@ const LUA_CODE = `--[[
         SLAX HUB  |  San Diego Roleplay
         الثيم: SlaxRed (الأحمر الغامق)
         مبني على تقرير فحص SLAX للريموتات
+        الميزات: أيم بوت + FOV · رقصة مايباخ 👑
     ════════════════════════════════════════════
 ]]
 
@@ -668,6 +805,7 @@ local TeamTab = Window:Tab({ Title = "الفِرق والسجن", Icon = "siren"
 local CarTab  = Window:Tab({ Title = "السيارات",      Icon = "car" })
 local PlrTab  = Window:Tab({ Title = "الشخصية",       Icon = "user" })
 local VisTab  = Window:Tab({ Title = "المرئيات",      Icon = "eye" })
+local AimTab  = Window:Tab({ Title = "الأيم بوت",     Icon = "crosshair" })
 local ExpTab  = Window:Tab({ Title = "تجريبي",        Icon = "flask-conical" })
 local SetTab  = Window:Tab({ Title = "الإعدادات",     Icon = "settings" })
 
@@ -968,6 +1106,265 @@ VisSec:Toggle({
     end,
 })
 
+-- ═══════════ رقصة مايباخ (داخل تبويب السيارات) ═══════════
+local danceActive = false
+local danceStyle  = "مايباخ"
+local danceSpeed  = 1
+local danceVelocity, danceGyro
+
+local function findMyVehicle()
+    local char = LP.Character
+    local hum  = char and char:FindFirstChildOfClass("Humanoid")
+    local seat = hum and hum.SeatPart
+    if not seat then return nil, nil end
+    local model = seat:FindFirstAncestorOfClass("Model")
+    if not model then return nil, nil end
+    return model, model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart")
+end
+
+local function stopMaybach()
+    danceActive = false
+    if danceVelocity then danceVelocity:Destroy() danceVelocity = nil end
+    if danceGyro then danceGyro:Destroy() danceGyro = nil end
+end
+
+local function startMaybach()
+    stopMaybach()
+
+    local model, base = findMyVehicle()
+    if not base then
+        notify("رقصة مايباخ", "لازم تكون جالس في سيارة أولاً")
+        return
+    end
+
+    danceActive = true
+
+    danceVelocity = Instance.new("BodyVelocity")
+    danceVelocity.MaxForce = Vector3.new(0, 60000, 0)
+    danceVelocity.Velocity = Vector3.zero
+    danceVelocity.P        = 9000
+    danceVelocity.Parent   = base
+
+    danceGyro = Instance.new("BodyAngularVelocity")
+    danceGyro.MaxTorque       = Vector3.new(50000, 50000, 50000)
+    danceGyro.AngularVelocity = Vector3.zero
+    danceGyro.P               = 9000
+    danceGyro.Parent          = base
+
+    -- رخصة مايباخ: إضاءة + نبضة عبر ريموتات اللعبة الحقيقية
+    fire("VehicleService", "SetLightbarStage", 3)
+    fire("VehicleService", "VehicleNudgeImpulse", Vector3.new(0, 12, 0))
+
+    task.spawn(function()
+        while danceActive and base.Parent do
+            local t = os.clock() * 3 * danceSpeed
+
+            if danceStyle == "مايباخ" then
+                danceVelocity.Velocity = Vector3.new(math.sin(t) * 6, math.abs(math.sin(t)) * 22, math.cos(t) * 6)
+                danceGyro.AngularVelocity = Vector3.new(math.sin(t) * 4, 2.5, math.cos(t) * 4)
+            elseif danceStyle == "نبض" then
+                danceVelocity.Velocity = Vector3.new(0, math.abs(math.sin(t)) * 32, 0)
+                danceGyro.AngularVelocity = Vector3.zero
+            elseif danceStyle == "دوران" then
+                danceVelocity.Velocity = Vector3.new(0, 16, 0)
+                danceGyro.AngularVelocity = Vector3.new(0, 14, 0)
+            elseif danceStyle == "قفزة" then
+                danceVelocity.Velocity = Vector3.new(0, math.sin(t) * 48, 0)
+                danceGyro.AngularVelocity = Vector3.new(math.sin(t * 2) * 6, 0, 0)
+            end
+
+            task.wait(0.03)
+        end
+        stopMaybach()
+    end)
+
+    notify("رقصة مايباخ 👑", "رخصة مايباخ — السيارة بدأت ترقص!")
+end
+
+local DanceSec = CarTab:Section({ Title = "رقصة مايباخ 👑" })
+
+DanceSec:Section({
+    Title = "رخصة مايباخ — MAYBACH EDITION",
+    TextSize = 15,
+    TextTransparency = 0.25,
+})
+
+DanceSec:Dropdown({
+    Title  = "ستايل الرقصة",
+    Values = { "مايباخ", "نبض", "دوران", "قفزة" },
+    Value  = "مايباخ",
+    Callback = function(opt) danceStyle = opt end,
+})
+
+DanceSec:Slider({
+    Title = "سرعة الرقصة",
+    Step  = 0.1,
+    Value = { Min = 0.5, Max = 3, Default = 1 },
+    Callback = function(v) danceSpeed = v end,
+})
+
+DanceSec:Toggle({
+    Title = "تشغيل رقصة مايباخ 👑",
+    Desc  = "اركب سيارة أولاً — رخصة مايباخ ترفع السيارة وتجعلها ترقص",
+    Callback = function(state)
+        if state then
+            startMaybach()
+        else
+            stopMaybach()
+            notify("رقصة مايباخ", "توقفت الرقصة")
+        end
+    end,
+})
+
+-- ═══════════ تبويب: الأيم بوت + FOV ═══════════
+local aimEnabled, aimTeamCheck = false, true
+local aimFOV, aimSmooth, aimPart = 120, 8, "Head"
+local fovVisible = true
+
+local fovCircle
+if type(Drawing) == "table" then
+    fovCircle = Drawing.new("Circle")
+    fovCircle.Color        = Color3.fromHex("#ff2d3f")
+    fovCircle.Thickness    = 1.5
+    fovCircle.Filled       = false
+    fovCircle.Transparency = 1
+    fovCircle.NumSides     = 64
+    fovCircle.Visible      = false
+end
+
+local rayParams = RaycastParams.new()
+rayParams.FilterType = Enum.RaycastFilterType.Exclude
+rayParams.FilterDescendantsInstances = { LP.Character }
+
+local function aimVisible(part)
+    local cam = workspace.CurrentCamera
+    if not cam then return false end
+    local hit = workspace:Raycast(cam.CFrame.Position, part.Position - cam.CFrame.Position, rayParams)
+    return hit == nil or hit.Instance:IsDescendantOf(part.Parent)
+end
+
+local function getAimTarget()
+    local cam = workspace.CurrentCamera
+    if not cam then return nil end
+    local center = Vector2.new(cam.ViewportSize.X / 2, cam.ViewportSize.Y / 2)
+    local best, bestDist = nil, math.huge
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LP and plr.Character then
+            local hum = plr.Character:FindFirstChildOfClass("Humanoid")
+            local sameTeam = aimTeamCheck and LP.Team ~= nil and plr.Team == LP.Team
+            if hum and hum.Health > 0 and not sameTeam then
+                local part = plr.Character:FindFirstChild(aimPart)
+                    or plr.Character:FindFirstChild("HumanoidRootPart")
+                if part and aimVisible(part) then
+                    local pos, onScreen = cam:WorldToViewportPoint(part.Position)
+                    if onScreen then
+                        local dist = (Vector2.new(pos.X, pos.Y) - center).Magnitude
+                        if dist <= aimFOV and dist < bestDist then
+                            bestDist = dist
+                            best = part
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return best
+end
+
+RunSvc.RenderStepped:Connect(function()
+    local cam = workspace.CurrentCamera
+    if not cam then return end
+
+    if fovCircle then
+        fovCircle.Position = Vector2.new(cam.ViewportSize.X / 2, cam.ViewportSize.Y / 2)
+        fovCircle.Radius   = aimFOV
+        fovCircle.Visible  = aimEnabled and fovVisible
+    end
+
+    if not aimEnabled then return end
+    rayParams.FilterDescendantsInstances = { LP.Character }
+
+    local target = getAimTarget()
+    if target then
+        local goal = CFrame.lookAt(cam.CFrame.Position, target.Position)
+        cam.CFrame = cam.CFrame:Lerp(goal, math.clamp(1 / math.max(aimSmooth, 1), 0.02, 0.8))
+    end
+end)
+
+local AimSec = AimTab:Section({ Title = "التصويب التلقائي (Aimbot)" })
+
+AimSec:Toggle({
+    Title = "تفعيل الأيم بوت",
+    Desc  = "تصويب تلقائي على أقرب هدف داخل دائرة FOV",
+    Callback = function(state) aimEnabled = state end,
+})
+
+AimSec:Toggle({
+    Title = "إظهار دائرة FOV",
+    Value = true,
+    Callback = function(state) fovVisible = state end,
+})
+
+AimSec:Slider({
+    Title = "نطاق التصويب (FOV)",
+    Step  = 5,
+    Value = { Min = 20, Max = 500, Default = 120 },
+    Callback = function(v) aimFOV = v end,
+})
+
+AimSec:Slider({
+    Title = "سلاسة التصويب",
+    Desc  = "1 = سريع جداً · 20 = ناعم",
+    Step  = 1,
+    Value = { Min = 1, Max = 20, Default = 8 },
+    Callback = function(v) aimSmooth = v end,
+})
+
+AimSec:Dropdown({
+    Title  = "الجزء المستهدف",
+    Values = { "الرأس (Head)", "الجسم (Root)" },
+    Value  = "الرأس (Head)",
+    Callback = function(opt)
+        aimPart = (opt == "الرأس (Head)") and "Head" or "HumanoidRootPart"
+    end,
+})
+
+AimSec:Toggle({
+    Title = "تجاهل أعضاء فريقي",
+    Value = true,
+    Callback = function(state) aimTeamCheck = state end,
+})
+
+local CamSec = AimTab:Section({ Title = "مجال الرؤية (Camera FOV)" })
+
+CamSec:Slider({
+    Title = "Camera FOV",
+    Desc  = "ملاحظة: اللعبة قد تعيد ضبطه تلقائياً",
+    Step  = 1,
+    Value = { Min = 70, Max = 120, Default = 70 },
+    Callback = function(v)
+        local cam = workspace.CurrentCamera
+        if cam then cam.FieldOfView = v end
+    end,
+})
+
+CamSec:Button({
+    Title = "إعادة ضبط مجال الرؤية",
+    Icon  = "rotate-ccw",
+    Callback = function()
+        local cam = workspace.CurrentCamera
+        if cam then cam.FieldOfView = 70 end
+        notify("FOV", "تمت إعادة ضبط الكاميرا إلى 70")
+    end,
+})
+
+CamSec:Section({
+    Title = "إذا لم تظهر دائرة FOV فمشغّلك لا يدعم Drawing — الأيم بوت يعمل بدون الدائرة.",
+    TextTransparency = 0.4,
+})
+
 -- ═══════════ تبويب: تجريبي ═══════════
 local ExpSec = ExpTab:Section({
     Title = "FeatureFlagService — ريموتات ADMIN (تجريبي)",
@@ -1108,7 +1505,7 @@ const REMOTES = [
   ['LoadoutService.SetScale','F'],['LoadoutService.RestoreAvatar','F'],['PlayerDataService.GetPlayerData','F'],
   ['VehicleService.SetSirenMode','E'],['VehicleService.SetSirenTone','E'],['VehicleService.SetLightbarStage','E'],
   ['VehicleService.ToggleLocked','F'],['VehicleService.ToggleDoors','E'],['VehicleService.UnstuckVehicle','E'],
-  ['VehicleService.ExitVehicleSeat','E'],['VehicleCustomisationService.OpenPortableSession','F'],
+  ['VehicleService.ExitVehicleSeat','E'],['VehicleService.VehicleNudgeImpulse','E'],['VehicleCustomisationService.OpenPortableSession','F'],
   ['FeatureFlagService.GetAllFlagsADMIN','F'],['FeatureFlagService.SetFlagADMIN','F']
 ];
 document.getElementById('remoteChips').innerHTML = REMOTES.map(([n,t]) =>
@@ -1162,6 +1559,52 @@ function filterSearch(q){
   });
 }
 
+/* ══ FOV + Aimbot state ══ */
+let fovVisible = true;
+let currentFov = 120;
+function applyFovValue(v){
+  currentFov = v;
+  const circle = document.getElementById('fovCircle');
+  if (circle){
+    const px = Math.max(44, Math.round(v * 1.15));
+    circle.style.width = px + 'px';
+    circle.style.height = px + 'px';
+    circle.style.boxShadow = '0 0 24px -4px rgba(224,36,56,.45), inset 0 0 ' + Math.round(px/4) + 'px rgba(224,36,56,.08)';
+  }
+  const lbl = document.getElementById('fovLabel');
+  if (lbl) lbl.textContent = 'FOV ' + v;
+  const val = document.getElementById('fovVal');
+  if (val) val.textContent = v;
+}
+function applyDanceSpeed(v){
+  const stage = document.getElementById('danceStage');
+  if (stage) stage.style.setProperty('--danceDur', (1.3 / Math.max(v, .5)).toFixed(2) + 's');
+}
+applyFovValue(120);
+applyDanceSpeed(1);
+
+/* ══ Maybach dance ══ */
+let danceOn = false;
+function toggleDance(){
+  danceOn = !danceOn;
+  const stage = document.getElementById('danceStage');
+  const btn = document.getElementById('danceBtn');
+  const label = document.getElementById('danceBtnLabel');
+  const icon = btn.querySelector('i, svg');
+  stage.classList.toggle('dancing', danceOn);
+  btn.classList.toggle('dancing', danceOn);
+  if (danceOn){
+    label.textContent = 'إيقاف رقصة مايباخ';
+    if (icon) icon.setAttribute('data-lucide','pause');
+    mockNotify('رقصة مايباخ','👑 السيارة بدأت ترقص — رخصة مايباخ');
+  } else {
+    label.textContent = 'شغّل رقصة مايباخ';
+    if (icon) icon.setAttribute('data-lucide','music');
+    mockNotify('رقصة مايباخ','توقفت الرقصة');
+  }
+  lucide.createIcons();
+}
+
 /* toggles */
 document.querySelectorAll('[data-toggle]').forEach(sw=>{
   sw.addEventListener('click', ()=>{
@@ -1177,6 +1620,18 @@ document.querySelectorAll('[data-toggle]').forEach(sw=>{
       mockNotify('FullBright', on ? 'أضاءت شوارع سان دييغو' : 'عادت الإضاءة الليلية');
       return;
     }
+    if (sw.id === 'aimToggle'){
+      document.getElementById('fovWrap').classList.toggle('hidden', !(on && fovVisible));
+      mockNotify('Aimbot', on ? 'تم تفعيل التصويب التلقائي' : 'تم إيقاف التصويب التلقائي');
+      return;
+    }
+    if (sw.id === 'fovToggle'){
+      fovVisible = on;
+      const aimOn = document.getElementById('aimToggle').classList.contains('on');
+      document.getElementById('fovWrap').classList.toggle('hidden', !(on && aimOn));
+      if (aimOn) mockNotify('دائرة FOV', on ? 'الدائرة ظاهرة الآن' : 'تم إخفاء الدائرة');
+      return;
+    }
     if (sw.dataset.name) mockNotify(sw.dataset.name, on ? 'مُفعّل' : 'مُعطّل');
   });
 });
@@ -1186,15 +1641,22 @@ document.querySelectorAll('.track.slider').forEach(track=>{
   const fill = track.querySelector('.fill');
   const thumb = track.querySelector('.thumb');
   const min = +track.dataset.min, max = +track.dataset.max;
-  const label = track.closest('.search-item').querySelector('.mono');
+  const row = track.closest('.search-item');
+  const label = row ? row.querySelector('.mono') : null;
+  function setValue(v){
+    if (track.dataset.fx === 'fov'){ applyFovValue(v); }
+    else if (track.dataset.fx === 'dance'){ if (label) label.textContent = 'x' + v; applyDanceSpeed(v); }
+    else if (label) { label.textContent = v; }
+  }
   function setVal(clientX){
     const r = track.getBoundingClientRect();
     const p = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
     fill.style.width = (p*100)+'%'; thumb.style.left = (p*100)+'%';
-    label.textContent = Math.round(min + p*(max-min));
+    setValue(Math.round(min + p*(max-min)));
   }
   const p0 = (+track.dataset.val - min)/(max-min);
   fill.style.width = (p0*100)+'%'; thumb.style.left = (p0*100)+'%';
+  setValue(+track.dataset.val);
   track.addEventListener('pointerdown', e=>{
     setVal(e.clientX);
     const mv = ev=> setVal(ev.clientX);
@@ -1226,6 +1688,7 @@ document.querySelectorAll('.dd').forEach(dd=>{
         document.getElementById('espLabel').style.color = opt.dataset.color;
         mockNotify('لون ESP','تم اختيار: '+opt.dataset.name);
       }
+      else if (act === 'aimpart'){ mockNotify('Aimbot','الجزء المستهدف: '+opt.dataset.name); }
     });
   });
 });
